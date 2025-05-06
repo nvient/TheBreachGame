@@ -539,18 +539,59 @@ function startGame() {
 
   function openFinalReport() {
   clearOptions();
-  logDialogue("Who do you believe is responsible for the breach?");
-  addOption("Logan", () => submitAccusation("Logan"));
-  addOption("Corey", () => submitAccusation("Corey"));
-  addOption("Coyle", () => submitAccusation("Coyle"));
-  addOption("Reyes", () => submitAccusation("Reyes"));
+  logDialogue("Submit your final report: Who caused the breach and what was the method?");
+
+  const container = document.getElementById("options-box");
+
+  const characterSelect = document.createElement("select");
+  characterSelect.id = "accusedCharacter";
+  ["Logan", "Corey", "Coyle", "Reyes"].forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    option.textContent = name;
+    characterSelect.appendChild(option);
+  });
+  container.appendChild(characterSelect);
+
+  const scenarioSelect = document.createElement("select");
+  scenarioSelect.id = "breachScenario";
+  [
+    "Clicked a phishing email disguised as a new hire packet",
+    "Downloaded malware from USB drive",
+    "Reused credentials from past breach",
+    "Forwarded scam to colleagues",
+    "Missed spoofed invoice request",
+    "Ignored endpoint alert",
+    "Fell for a vishing call",
+    "Used weak password",
+    "Opened malicious attachment",
+    "Allowed access to outsider"
+  ].forEach(scenario => {
+    const option = document.createElement("option");
+    option.value = scenario;
+    option.textContent = scenario;
+    scenarioSelect.appendChild(option);
+  });
+  container.appendChild(scenarioSelect);
+
+  const submitButton = document.createElement("button");
+  submitButton.textContent = "Submit Report";
+  submitButton.onclick = () => {
+    const accused = document.getElementById("accusedCharacter").value;
+    const reason = document.getElementById("breachScenario").value;
+    submitAccusation(accused, reason);
+  };
+  container.appendChild(submitButton);
 }
 
-function submitAccusation(name) {
+function submitAccusation(name, reason) {
   clearOptions();
-  if (name === "Logan") {
+  if (name === "Logan" && reason === "Clicked a phishing email disguised as a new hire packet") {
     logDialogue("✅ Correct! Logan clicked a phishing link disguised as a new hire packet. The breach originated there. Great job detective!");
   } else {
+    logDialogue(`❌ Not quite. ${name} wasn’t the cause this time with that method. Keep investigating and review your clues.`);
+  }
+} else {
     logDialogue(`❌ Not quite. ${name} wasn’t the cause this time. Keep investigating and check your clues!`);
   }
 }
