@@ -4,6 +4,20 @@
   <meta charset="UTF-8">
   <title>The Breach: The Game</title>
   <style>
+    body {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 30px;
+    }
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      max-width: 960px;
+    }
+    .sidebar {
+      min-width: 300px;
+    }
     body { font-family: sans-serif; background-color: #f9f9f9; padding: 20px; }
     button { margin: 5px; padding: 10px 20px; font-size: 16px; }
     #game-area { position: relative; width: 960px; height: 540px; border: 1px solid #ccc; margin-bottom: 20px; }
@@ -61,6 +75,7 @@
   </style>
 </head>
 <body>
+<div class="game-container">
   <h1>The Breach: The Game</h1>
   <div>
     <button onclick="navigateTo('Main Office')">Main Office</button>
@@ -77,15 +92,16 @@
     <img id="character" src="" alt="Character">
   </div>
 
-<div id="clue-popup">
-  <h3>Clue Sheet</h3>
-  <ul id="clue-list"></ul>
-  <button onclick="toggleCluePopup()">Close</button>
+<div class="sidebar">
+  <div id="clue-popup" style="display:block; position:relative; transform:none; top:auto; left:auto; box-shadow:none; border:1px solid #ccc;">
+    <h3>Clue Sheet</h3>
+    <ul id="clue-list"></ul>
+  </div>
+  <button onclick="openFinalReport()" style="margin-top:20px;">Submit Final Report</button>
 </div>
-<div>
-  <button onclick="openFinalReport()">Submit Final Report</button>
-</div>
-<div id="dialogue-box">Click a room to begin your investigation.</div>
+
+
+  <div id="dialogue-box">Click a room to begin your investigation.</div>
   <div id="options-box"></div>
 
   <script>
@@ -539,5 +555,6 @@ function submitAccusation(name) {
   }
 }
 </script>
+</div>
 </body>
 </html>
