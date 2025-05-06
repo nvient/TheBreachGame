@@ -82,7 +82,9 @@
   <ul id="clue-list"></ul>
   <button onclick="toggleCluePopup()">Close</button>
 </div>
-
+<div>
+  <button onclick="openFinalReport()">Submit Final Report</button>
+</div>
 <div id="dialogue-box">Click a room to begin your investigation.</div>
   <div id="options-box"></div>
 
@@ -166,11 +168,17 @@
       highlightRoomButton(room);
       switch (room) {
         case "Server Room":
-          bg.src = "assets/rooms/server_room.png";
-          char.src = "assets/characters/coyle.png";
-          logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful.");
-          addOption("Talk to Coyle", talkToCoyle);
-          break;
+  bg.src = "assets/rooms/server_room.png";
+  char.src = "assets/characters/coyle.png";
+  logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful. A terminal glows in the corner.");
+  addOption("Talk to Coyle", talkToCoyle);
+  addOption("Access Dark Web Terminal", () => {
+    addClue("Dark Web Terminal: Multiple employees have credentials in past breaches. Reyes and Coyle's passwords were found hashed. Logan is not listed.");
+    logDialogue("The terminal shows a searchable breach archive. You find hashed passwords linked to Coyle and Reyes from previous incidents, but Logan is not in any list. Corey’s data shows up in an older forum thread, raising questions.");
+  });
+    logDialogue("The terminal shows past credential leaks. One entry is flagged as recently active. Logan's credentials are not listed.");
+  });
+  break;
         case "Lobby":
           bg.src = "assets/rooms/lobby.png";
           char.src = "assets/characters/reyes.png";
@@ -193,11 +201,18 @@
   });
           break;
         case "HR Office":
-          bg.src = "assets/rooms/hr_office.png";
-          char.src = "assets/characters/corey.png";
-          logDialogue("You find Corey examining some personnel files.");
-          addOption("Talk to Corey", talkToCorey);
-          break;
+  bg.src = "assets/rooms/hr_office.png";
+  char.src = "assets/characters/corey.png";
+  logDialogue("You find Corey examining some personnel files. A file cabinet stands nearby.");
+  addOption("Talk to Corey", talkToCorey);
+  addOption("Open File Cabinet", () => {
+    addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake.");
+    addClue("HR File: Reyes has completed all training modules. Corey’s security training is overdue by 2 weeks.");
+    logDialogue("You find a folder marked 'Logan – Pending'. It notes that the official new hire packet hasn’t been sent yet. A sticky note says: 'Wait for IT verification'. Reyes has a perfect training record. Corey is overdue on his annual refresher.");
+  });
+    logDialogue("Inside the cabinet, you find Logan's onboarding file with a post-it from IT: 'Pending verification of email domain.'");
+  });
+  break;
         case "Crutchfield's Office":
           bg.src = "assets/rooms/crutchfield_office.png";
           char.src = "assets/characters/crutchfield.png";
@@ -257,6 +272,17 @@
 
   if (state.loganDialogues.onboarding && state.loganDialogues.aftermath && state.loganDialogues.feelings && state.loganDialogues.backgroundCheck) {
     logDialogue("Logan: 'I just hope this doesn’t ruin everything.'");
+    addOption("Ask if anyone else saw the email", () => {
+      clearOptions();
+      logDialogue("Logan: 'I showed it to Coyle and Corey. Coyle said it looked fine. Corey didn’t say much.'");
+      addClue("Logan consulted Coyle and Corey before opening the email.");
+    });
+    addOption("Ask if he suspects anyone else", () => {
+      clearOptions();
+      logDialogue("Logan: 'I don’t want to point fingers, but Corey’s reaction felt off... like he knew something.'");
+    });
+    addOption("Talk to Logan again", talkToLogan);
+    addOption("Talk to Logan again", talkToLogan);
   }
 
 }
@@ -319,6 +345,7 @@ function talkToCorey() {
   }
   if (state.coreyDialogues.behavior && state.coreyDialogues.pastIncidents && state.coreyDialogues.phishingTips && state.coreyDialogues.clickedBefore) {
     logDialogue("Corey: 'That’s all I’ve got for now. Hope it helps.'");
+    addOption("Talk to Corey again", talkToCorey);
   }
 }
 
@@ -332,6 +359,19 @@ function talkToCrutchfield() {
     };
   }
   logDialogue("Crutchfield: 'I expected better. This kind of lapse could cost us dearly.'");
+  addOption("Ask if Logan passed the security onboarding quiz", () => {
+    clearOptions();
+    logDialogue("Crutchfield: 'He scored 92%. I figured he knew the basics. Guess not.'");
+    addClue("Logan passed onboarding quiz but still fell for phishing.");
+  });
+  addOption("Ask if Corey is trusted", () => {
+    clearOptions();
+    logDialogue("Crutchfield: 'I’ve always had my doubts. Smart guy, but he’s secretive.'");
+  });
+  addOption("Ask if this could be an external threat", () => {
+    clearOptions();
+    logDialogue("Crutchfield: 'We’ve seen botnet activity targeting us this quarter. Could be more than carelessness.'");
+  });
 
   if (!state.crutchfieldDialogues.onboarding) {
     addOption("Ask about Logan's onboarding process", () => {
@@ -358,6 +398,7 @@ function talkToCrutchfield() {
 
   if (state.crutchfieldDialogues.onboarding && state.crutchfieldDialogues.response && state.crutchfieldDialogues.suspicion) {
     logDialogue("Crutchfield: 'Get me results soon. I want this cleaned up before it spreads further.'");
+    addOption("Talk to Crutchfield again", talkToCrutchfield);
   }
 }
 
@@ -371,6 +412,15 @@ function talkToReyes() {
     };
   }
   logDialogue("Reyes: 'I’ve worked plenty of cases like this. You learn to see the patterns.'");
+  addOption("Ask about previous cases", () => {
+    clearOptions();
+    logDialogue("Reyes: 'We had a CFO once who got duped by a fake invoice. Cost us thousands before we caught it.'");
+    addClue("Past attack involved a phishing invoice scam affecting CFO.");
+  });
+  addOption("Ask how she spots a phishing email", () => {
+    clearOptions();
+    logDialogue("Reyes: 'If it feels urgent, emotional, or off in any way—I take a second look. Always hover over links too.'");
+  });
   if (!state.reyesDialogues.behavior) {
     addOption("Ask about Logan's behavior", () => {
       clearOptions();
@@ -395,6 +445,7 @@ function talkToReyes() {
   }
   if (state.reyesDialogues.behavior && state.reyesDialogues.training && state.reyesDialogues.agents) {
     logDialogue("Reyes: 'Keep digging. The pieces will fit together soon.'");
+    addOption("Talk to Reyes again", talkToReyes);
   }
 }
 
@@ -409,6 +460,15 @@ function talkToCoyle() {
     };
   }
   logDialogue("Coyle: 'The server load spiked right after someone clicked that email. Want to dig deeper?'");
+  addOption("Ask about system behavior during the attack", () => {
+    clearOptions();
+    logDialogue("Coyle: 'The machines slowed one by one. It was almost like watching dominoes fall in slow motion.'");
+    addClue("Coyle observed progressive system slowdowns during breach.");
+  });
+  addOption("Ask about unusual user activity logs", () => {
+    clearOptions();
+    logDialogue("Coyle: 'There were a couple of machines running scripts after hours. Might’ve been automated. Or not.'");
+  });
 
   if (!state.coyleDialogues.logs) {
     addOption("Ask about the server logs", () => {
@@ -455,6 +515,7 @@ function talkToCoyle() {
 
   if (state.coyleDialogues.logs && state.coyleDialogues.message && state.coyleDialogues.filters) {
     logDialogue("Coyle: 'I’m running backtraces, but I know I missed something. That’s on me.'");
+    addOption("Talk to Coyle again", talkToCoyle);
   }
 }
 
@@ -464,6 +525,23 @@ function startGame() {
 
     window.onload = startGame;
 
-  </script>
+  function openFinalReport() {
+  clearOptions();
+  logDialogue("Who do you believe is responsible for the breach?");
+  addOption("Logan", () => submitAccusation("Logan"));
+  addOption("Corey", () => submitAccusation("Corey"));
+  addOption("Coyle", () => submitAccusation("Coyle"));
+  addOption("Reyes", () => submitAccusation("Reyes"));
+});
+
+function submitAccusation(name) {
+  clearOptions();
+  if (name === "Logan") {
+    logDialogue("✅ Correct! Logan clicked a phishing link disguised as a new hire packet. The breach originated there. Great job detective!");
+  } else {
+    logDialogue(`❌ Not quite. ${name} wasn’t the cause this time. Keep investigating and check your clues!`);
+  }
+}
+</script>
 </body>
 </html>
