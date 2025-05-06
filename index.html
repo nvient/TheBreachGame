@@ -4,107 +4,32 @@
   <meta charset="UTF-8">
   <title>The Breach: The Game</title>
   <style>
-    body {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      gap: 30px;
-      font-family: sans-serif;
-      background-color: #f9f9f9;
-      margin: 0;
-      padding: 20px;
-    }
-    .game-container {
-      display: flex;
-      flex-direction: column;
-      max-width: 960px;
-    }
-    .controls button {
-      margin: 5px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
-    #game-area {
-      position: relative;
-      width: 960px;
-      height: 540px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-    }
-    #background {
-      width: 100%;
-      height: 100%;
-    }
-    #character {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 60%;
-      pointer-events: none;
-    }
-    #options-box {
-      margin-bottom: 10px;
-    }
-    #options-box button {
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 10px;
-      font-size: 15px;
-      display: block;
-      width: 100%;
-      max-width: 400px;
-      margin: 5px auto;
-      cursor: pointer;
-    }
-    #options-box button:hover {
-      background-color: #f0f0f0;
-    }
-    #dialogue-box {
-      background: rgba(255,255,255,0.95);
-      padding: 20px;
-      border: 2px solid #444;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      font-size: 16px;
-      line-height: 1.5;
-      white-space: pre-line;
-      min-height: 100px;
-    }
-    .sidebar {
-      min-width: 300px;
-    }
-    #clue-sheet {
-      border: 1px solid #ccc;
-      background: #fff;
-      padding: 10px;
-    }
-    #clue-sheet h3 {
-      margin-top: 0;
-    }
-    #clue-sheet ul {
-      padding-left: 20px;
-    }
-    #submit-report {
-      margin-top: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      width: 100%;
-      box-sizing: border-box;
-    }
+    body { display: flex; flex-direction: row; justify-content: center; gap: 30px; font-family: sans-serif; background: #f9f9f9; margin: 0; padding: 20px; }
+    .game-container { display: flex; flex-direction: column; max-width: 960px; }
+    .controls button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+    #game-area { position: relative; width: 960px; height: 540px; border: 1px solid #ccc; margin-bottom: 10px; }
+    #background { width: 100%; height: 100%; }
+    #character { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 60%; pointer-events: none; }
+    #options-box button { background: #fff; border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin: 5px auto; display: block; width: 100%; max-width: 400px; cursor: pointer; }
+    #options-box button:hover { background: #f0f0f0; }
+    #dialogue-box { background: rgba(255,255,255,0.95); padding: 20px; border:2px solid #444; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1); font-size:16px; line-height:1.5; white-space:pre-line; min-height:100px; }
+    .sidebar { min-width: 300px; }
+    #clue-sheet { border:1px solid #ccc; background:#fff; padding:10px; }
+    #clue-sheet h3 { margin-top:0; }
+    #clue-sheet ul { padding-left:20px; }
+    #submit-report { margin-top:10px; padding:10px 20px; font-size:16px; width:100%; box-sizing:border-box; }
   </style>
 </head>
 <body>
   <div class="game-container">
     <h1>The Breach: The Game</h1>
     <div class="controls">
+      <button onclick="navigateTo('Lobby')">Lobby</button>
       <button onclick="navigateTo('Main Office')">Main Office</button>
       <button onclick="navigateTo('Break Room')">Break Room</button>
       <button onclick="navigateTo('HR Office')">HR Office</button>
-      <button onclick="navigateTo('Crutchfield\'s Office')">Crutchfield's Office</button>
-      <button onclick="navigateTo('Lobby')">Lobby</button>
       <button onclick="navigateTo('Server Room')">Server Room</button>
+      <button onclick="navigateTo('Crutchfield\'s Office')">Crutchfield's Office</button>
     </div>
     <div id="game-area">
       <img id="background" src="" alt="Room Background">
@@ -123,18 +48,9 @@
   <script>
     const state = {
       clueSheet: [],
-      talkedToLogan: false,
-      talkedToCorey: false,
-      talkedToCoyle: false,
-      talkedToReyes: false,
-      talkedToCrutchfield: false,
-      loganDialogues: {},
-      coreyDialogues: {},
-      coyleDialogues: {},
-      reyesDialogues: {},
-      crutchfieldDialogues: {}
+      loganDialogues: {}, coreyDialogues: {}, coyleDialogues: {}, reyesDialogues: {}, crutchfieldDialogues: {}
     };
-    let currentRoom = "";
+    let currentRoom = '';
     let roomDialogues = {};
 
     function logDialogue(text) {
@@ -142,133 +58,109 @@
       else roomDialogues[currentRoom] += "\n" + text;
       document.getElementById('dialogue-box').innerText = roomDialogues[currentRoom];
     }
-
-    function clearOptions() {
-      document.getElementById('options-box').innerHTML = '';
-    }
-
-    function addOption(label, callback) {
-      const btn = document.createElement('button');
-      btn.textContent = label;
-      btn.onclick = callback;
-      document.getElementById('options-box').appendChild(btn);
-    }
-
-    function addClue(clue) {
-      if (!state.clueSheet.includes(clue)) {
-        state.clueSheet.push(clue);
-        const li = document.createElement('li');
-        li.textContent = `${state.clueSheet.length}. ${clue}`;
-        document.getElementById('clue-list').appendChild(li);
-      }
-    }
-
-    function highlightRoomButton(room) {
-      document.querySelectorAll('.controls button').forEach(btn => {
-        btn.style.backgroundColor = btn.textContent === room ? '#d0eaff' : '';
-      });
-    }
+    function clearOptions() { document.getElementById('options-box').innerHTML = ''; }
+    function addOption(label, cb) { const btn = document.createElement('button'); btn.textContent = label; btn.onclick = cb; document.getElementById('options-box').appendChild(btn); }
+    function addClue(clue) { if (!state.clueSheet.includes(clue)) { state.clueSheet.push(clue); const li=document.createElement('li'); li.textContent=`${state.clueSheet.length}. ${clue}`; document.getElementById('clue-list').appendChild(li);} }
+    function highlightRoomButton(room) { document.querySelectorAll('.controls button').forEach(b=>b.style.backgroundColor=b.textContent===room?'#d0eaff':''); }
 
     function navigateTo(room) {
-      currentRoom = room;
-      highlightRoomButton(room);
-      roomDialogues[room] = '';
-      document.getElementById('dialogue-box').innerText = '';
+      currentRoom = room; highlightRoomButton(room);
+      roomDialogues[room] = ''; document.getElementById('dialogue-box').innerText = '';
       clearOptions();
-      const bg = document.getElementById('background');
-      const char = document.getElementById('character');
+      const bg=document.getElementById('background'), char=document.getElementById('character');
       switch(room) {
+        case 'Lobby':
+          bg.src='assets/rooms/lobby.png'; char.src='assets/characters/reyes.png';
+          logDialogue("Agent Reyes leans against the reception desk, watching you approach.");
+          addOption('Talk to Reyes', talkToReyes);
+          break;
         case 'Main Office':
-          bg.src = 'assets/rooms/main_office.png';
-          char.src = 'assets/characters/logan.png';
+          bg.src='assets/rooms/main_office.png'; char.src='assets/characters/logan.png';
           logDialogue("You see Logan at his desk, visibly nervous.");
           addOption('Talk to Logan', talkToLogan);
           break;
         case 'Break Room':
-          bg.src = 'assets/rooms/break_room.png';
-          char.src = '';
+          bg.src='assets/rooms/break_room.png'; char.src='';
           logDialogue("A quiet room. You notice a USB drive on the table.");
-          addOption('View USB Drive', () => {
-            addClue('Secret Drive labeled for Agent Coyle');
-            logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle'.");
-          });
+          addOption('View USB Drive', ()=>{ addClue("Secret Drive labeled for Agent Coyle"); logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle'."); });
           break;
         case 'HR Office':
-          bg.src = 'assets/rooms/hr_office.png';
-          char.src = 'assets/characters/corey.png';
+          bg.src='assets/rooms/hr_office.png'; char.src='assets/characters/corey.png';
           logDialogue("You find Corey examining some personnel files. A file cabinet stands nearby.");
           addOption('Talk to Corey', talkToCorey);
-          addOption('Open File Cabinet', () => {
-            addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake.");
-            logDialogue("You find a folder marked 'Logan – Pending'... never sent official packet.");
-          });
-          break;
-        case 'Crutchfield\'s Office':
-          bg.src = 'assets/rooms/crutchfield_office.png';
-          char.src = 'assets/characters/crutchfield.png';
-          logDialogue("Deputy Director Crutchfield stands at her desk.");
-          addOption('Talk to Crutchfield', talkToCrutchfield);
-          break;
-        case 'Lobby':
-          bg.src = 'assets/rooms/lobby.png';
-          char.src = 'assets/characters/reyes.png';
-          logDialogue("Agent Reyes leans against the reception desk.");
-          addOption('Talk to Reyes', talkToReyes);
+          addOption('Open File Cabinet', ()=>{ addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake."); addClue("HR File: Reyes has completed all training modules. Corey's security training is overdue by 2 weeks."); logDialogue("You find a folder marked 'Logan – Pending' with a note 'Wait for IT verification'."); });
           break;
         case 'Server Room':
-          bg.src = 'assets/rooms/server_room.png';
-          char.src = 'assets/characters/coyle.png';
-          logDialogue("Agent Coyle stands beside a server rack. A terminal glows.");
+          bg.src='assets/rooms/server_room.png'; char.src='assets/characters/coyle.png';
+          logDialogue("Agent Coyle stands beside a humming server rack. A terminal glows in the corner.");
           addOption('Talk to Coyle', talkToCoyle);
-          addOption('Access Dark Web Terminal', () => {
-            addClue('Dark Web Terminal: Employees hashed credentials found; Logan clean');
-            logDialogue('Terminal shows hashed creds for Coyle and Reyes; Logan not listed.');
-          });
+          addOption('Access Dark Web Terminal', ()=>{ addClue('Dark Web Terminal: Multiple employees have credentials in past breaches. Reyes and Coyle's passwords were found hashed. Logan is not listed.'); logDialogue('Terminal shows hashed creds for Coyle and Reyes; Logan not found.'); });
+          break;
+        case 'Crutchfield\'s Office':
+          bg.src='assets/rooms/crutchfield_office.png'; char.src='assets/characters/crutchfield.png';
+          logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
+          addOption('Talk to Crutchfield', talkToCrutchfield);
           break;
         default:
-          logDialogue('This room doesn\'t exist yet.');
+          logDialogue("This room doesn't exist yet.");
       }
     }
 
     function talkToLogan() {
-      clearOptions();
-      if (!state.loganDialogues.onboarding) {
-        logDialogue("Logan: 'Am I in trouble?'");
-        addOption('Ask about the onboarding email', () => {
-          logDialogue("Logan: 'I clicked a fake packet email.'"); state.loganDialogues.onboarding = true;
-        });
-      } else {
-        logDialogue("Logan: 'That\'s all I can tell you.'");
-      }
+      clearOptions(); const d=state.loganDialogues;
+      if (!d.onboarding) { logDialogue("Logan: 'Am I in trouble? I thought I followed protocol.'"); addOption('Ask about onboarding email', ()=>{ logDialogue("Logan: 'It looked official... I clicked a fake packet.'"); addClue("Logan admits to clicking the phishing email."); d.onboarding=true; }); }
+      else if (!d.aftermath) { addOption('Ask what happened after', ()=>{ clearOptions(); logDialogue("Logan: 'It froze then... nothing, until now.'"); d.aftermath=true; }); }
+      else if (!d.feelings) { addOption('Ask how he feels', ()=>{ clearOptions(); logDialogue("Logan: 'I feel awful...'"); d.feelings=true; }); }
+      else if (!d.backgroundCheck) { addOption('Ask about prior training', ()=>{ clearOptions(); logDialogue("Logan: 'It was basic, no spear-phishing.'"); d.backgroundCheck=true; }); }
+      else { logDialogue("Logan: 'I just hope this doesn’t ruin everything.'"); addOption('Talk again', talkToLogan); }
     }
-    // Similar talkToCorey, talkToCoyle, talkToReyes, talkToCrutchfield implementations...
+
+    function talkToCorey() {
+      clearOptions(); const d=state.coreyDialogues;
+      if (!d.behavior) { logDialogue("Corey: 'First breach rodeo...'"); addOption('Ask about suspicious behavior', ()=>{ clearOptions(); logDialogue("Corey: 'Logan showed me an email...'"); addClue("Corey warned Logan not to open the suspicious email."); d.behavior=true; addOption('Ask why not reported', ()=>{ clearOptions(); logDialogue("Corey: 'I figured he’d be fine.'"); }); }); }
+      if (!d.pastIncidents) { addOption('Ask about past incidents', ()=>{ clearOptions(); logDialogue("Corey: 'HR had spoofed packets before.'"); d.pastIncidents=true; addOption('Ask who handled them', ()=>{ clearOptions(); logDialogue("Corey: 'Reyes and I, but she was out.'"); }); }); }
+      if (!d.phishingTips) { addOption('Ask phishing tips', ()=>{ clearOptions(); logDialogue("Corey: 'Check URLs...' "); d.phishingTips=true; addOption('Ask what makes them suspicious', ()=>{ clearOptions(); logDialogue("Corey: 'Typos, weird domains.'"); }); }); }
+      if (!d.clickedBefore) { addOption('Ask if he slipped', ()=>{ clearOptions(); logDialogue("Corey: 'Not since black hat days.'"); d.clickedBefore=true; addOption('Press him', ()=>{ clearOptions(); logDialogue("Corey: 'Relax, I’m good.'"); }); }); }
+      if (d.behavior&&d.pastIncidents&&d.phishingTips&&d.clickedBefore) { logDialogue("Corey: 'That’s all I’ve got.'"); addOption('Talk again', talkToCorey); }
+    }
+
+    function talkToCoyle() {
+      clearOptions(); const d=state.coyleDialogues;
+      if (!d.logs) { logDialogue("Coyle: 'Server load spiked...'"); addOption('Ask about server logs', ()=>{ clearOptions(); logDialogue("Coyle: 'Ransomware started at 9:03.'"); addClue("Coyle's logs confirm the attack began shortly after email."); d.logs=true; addOption('Ask about login attempts', ()=>{ clearOptions(); logDialogue("Coyle: 'One from Romania, blocked.'"); d.logins=true; addOption('Ask why not flagged', ()=>{ clearOptions(); logDialogue("Coyle: 'Filters caught it.'"); }); }); }); }
+      if (!d.message) { addOption('Ask about Logan message', ()=>{ clearOptions(); logDialogue("Coyle: 'He asked if file was safe...'"); addClue("Coyle okayed the suspicious email."); d.message=true; addOption('Ask why no double-check', ()=>{ clearOptions(); logDialogue("Coyle: 'Patch rollout priority.'"); }); }); }
+      if (!d.filters) { addOption('Ask prevention', ()=>{ clearOptions(); logDialogue("Coyle: 'Filters miss spear-phish.'"); d.filters=true; addOption('Ask about filter config', ()=>{ clearOptions(); logDialogue("Coyle: 'Configured but not perfect.'"); }); }); }
+      if (d.logs&&d.message&&d.filters) { logDialogue("Coyle: 'I missed something.'"); addOption('Talk again', talkToCoyle); }
+    }
+
+    function talkToReyes() {
+      clearOptions(); const d=state.reyesDialogues;
+      if (!d.behavior) { logDialogue("Reyes: 'I’ve worked cases like this.'"); addOption('Ask about previous cases', ()=>{ clearOptions(); logDialogue("Reyes: 'CFO duped by fake invoice.'"); addClue("Past phishing invoice scam."); d.behavior=true; }); }
+      if (!d.training) { addOption('Ask about training gaps', ()=>{ clearOptions(); logDialogue("Reyes: 'Need refresher courses.'"); d.training=true; }); }
+      if (!d.agents) { addOption('Ask about other agents', ()=>{ clearOptions(); logDialogue("Reyes: 'Coyle hasty at times.'"); d.agents=true; }); }
+      if (d.behavior&&d.training&&d.agents) { logDialogue("Reyes: 'Keep digging.'"); addOption('Talk again', talkToReyes); }
+    }
+
+    function talkToCrutchfield() {
+      clearOptions(); const d=state.crutchfieldDialogues;
+      if (!d.onboarding) { logDialogue("Crutchfield: 'Lapse costly.'"); addOption('Ask onboarding quiz', ()=>{ clearOptions(); logDialogue("Crutchfield: 'He scored 92%.'"); addClue("Logan passed onboarding quiz but fell for phishing."); d.onboarding=true; }); }
+      if (!d.response) { addOption('Ask response time', ()=>{ clearOptions(); logDialogue("Crutchfield: 'We responded fast.'"); d.response=true; }); }
+      if (!d.suspicion) { addOption('Ask about Corey', ()=>{ clearOptions(); logDialogue("Crutchfield: 'He’s secretive.'"); d.suspicion=true; }); }
+      if (d.onboarding&&d.response&&d.suspicion) { logDialogue("Crutchfield: 'Get results soon.'"); addOption('Talk again', talkToCrutchfield); }
+    }
 
     function openFinalReport() {
-      clearOptions();
-      logDialogue('Submit your final report: Who & how?');
-      const container = document.getElementById('options-box');
-      const charSelect = document.createElement('select');
-      charSelect.id = 'accusedCharacter';
-      ['Logan','Corey','Coyle','Reyes'].forEach(n => { const o=document.createElement('option'); o.value=o.textContent=n; charSelect.appendChild(o); });
-      container.appendChild(charSelect);
-      const scenarioSelect = document.createElement('select');
-      scenarioSelect.id = 'breachScenario';
-      ['Clicked a phishing email disguised as a new hire packet', 'Downloaded malware from USB drive', 'Reused credentials from past breach', 'Forwarded scam to colleagues', 'Missed spoofed invoice request', 'Ignored endpoint alert', 'Fell for a vishing call', 'Used weak password', 'Opened malicious attachment', 'Allowed access to outsider'].forEach(s=>{const o=document.createElement('option');o.value=o.textContent=s;scenarioSelect.appendChild(o);});
-      container.appendChild(scenarioSelect);
-      const submitBtn = document.createElement('button');
-      submitBtn.textContent = 'Submit';
-      submitBtn.onclick = () => submitAccusation(charSelect.value, scenarioSelect.value);
-      container.appendChild(submitBtn);
+      clearOptions(); logDialogue('Submit final report: Who & how?');
+      const container=document.getElementById('options-box');
+      const cs=document.createElement('select'); cs.id='accusedCharacter'; ['Logan','Corey','Coyle','Reyes'].forEach(n=>{const o=document.createElement('option');o.value=o.textContent=n;cs.appendChild(o);}); container.appendChild(cs);
+      const ss=document.createElement('select'); ss.id='breachScenario'; ['Clicked a phishing email disguised as a new hire packet','Downloaded malware from USB drive','Reused credentials from past breach','Forwarded scam','Missed invoice scam','Ignored alert','Vishing call','Weak password','Malicious attachment','External access'].forEach(s=>{const o=document.createElement('option');o.value=o.textContent=s;ss.appendChild(o);}); container.appendChild(ss);
+      const sb=document.createElement('button'); sb.textContent='Submit'; sb.onclick=()=>submitAccusation(cs.value, ss.value); container.appendChild(sb);
     }
 
-    function submitAccusation(name, reason) {
-      clearOptions();
-      if (name==='Logan' && reason==='Clicked a phishing email disguised as a new hire packet') {
-        logDialogue('✅ Correct!');
-      } else logDialogue(`❌ Not quite. ${name} & that method incorrect.`);
+    function submitAccusation(n, r) {
+      clearOptions(); if(n==='Logan'&&r==='Clicked a phishing email disguised as a new hire packet') logDialogue('✅ Correct!'); else logDialogue(`❌ Not quite. ${n} & that method incorrect.`);
     }
 
-    function startGame() { navigateTo('Lobby'); }
+    function startGame(){navigateTo('Lobby');}
     document.addEventListener('DOMContentLoaded', startGame);
   </script>
 </body>
