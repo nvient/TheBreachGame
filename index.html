@@ -606,8 +606,9 @@ function submitAccusation(name, reason) {
   if (name === "Logan" && reason === "Clicked a phishing email disguised as a new hire packet") {
     logDialogue("✅ Correct! Logan clicked a phishing link disguised as a new hire packet. The breach originated there. Great job detective!");
   } else {
-    logDialogue(`❌ Not quite. ${name} wasn’t the cause this time with that method. Keep investigating and review your clues.`);
+    logDialogue(`❌ Not quite. ${name} and that method aren't the right match this time. Review your clues and try again.`);
   }
+}
 } wasn’t the cause this time with that method. Keep investigating and review your clues.`);
   }
 } else {
