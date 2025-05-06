@@ -83,42 +83,51 @@
   currentRoom = room;
   highlightRoomButton(room);
   switch (room) {
-        case "Server Room":
-          bg.src = "assets/rooms/server_room.png";
-          char.src = "assets/characters/coyle.png";
-          logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful.");
-          addOption("Talk to Coyle", talkToCoyle);
+    case "Server Room":
+      bg.src = "assets/rooms/server_room.png";
+      char.src = "assets/characters/coyle.png";
+      logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful.");
+      addOption("Talk to Coyle", talkToCoyle);
+      break;
+    case "Lobby":
+      bg.src = "assets/rooms/lobby.png";
+      char.src = "assets/characters/reyes.png";
+      logDialogue("Agent Reyes leans against the reception desk, watching you approach.");
+      addOption("Talk to Reyes", talkToReyes);
+      break;
+    case "Main Office":
+      bg.src = "assets/rooms/main_office.png";
+      char.src = "assets/characters/logan.png";
+      logDialogue("You see Logan at his desk, visibly nervous.");
+      addOption("Talk to Logan", talkToLogan);
+      break;
+    case "Break Room":
+      bg.src = "assets/rooms/break_room.png";
+      char.src = "";
+      logDialogue("A quiet room. You notice a USB drive on the table.");
+      addOption("Inspect USB drive", inspectUSB);
+      break;
+    case "HR Office":
+      bg.src = "assets/rooms/hr_office.png";
+      char.src = "assets/characters/corey.png";
+      logDialogue("You find Corey examining some personnel files.");
+      addOption("Talk to Corey", talkToCorey);
+      break;
+    case "Crutchfield's Office":
+      bg.src = "assets/rooms/crutchfield_office.png";
+      char.src = "assets/characters/crutchfield.png";
+      logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
+      addOption("Talk to Crutchfield", talkToCrutchfield);
+      break;
+    default:
+      logDialogue("This room doesn't exist yet.");
+      break;
+  }
+}
           break;
-        case "Lobby":
-          bg.src = "assets/rooms/lobby.png";
-          char.src = "assets/characters/reyes.png";
-          logDialogue("Agent Reyes leans against the reception desk, watching you approach.");
-          addOption("Talk to Reyes", talkToReyes);
-          break;
-        case "Main Office":
-          bg.src = "assets/rooms/main_office.png";
-          char.src = "assets/characters/logan.png";
-          logDialogue("You see Logan at his desk, visibly nervous.");
-          addOption("Talk to Logan", talkToLogan);
-          break;
-        case "Break Room":
-          bg.src = "assets/rooms/break_room.png";
-          char.src = "";
-          logDialogue("A quiet room. You notice a USB drive on the table.");
-          addOption("Inspect USB drive", inspectUSB);
-          break;
-        case "HR Office":
-           bg.src = "assets/rooms/hr_office.png";
-          char.src = "assets/characters/corey.png";
-          logDialogue("You find Corey examining some personnel files.");
-          addOption("Talk to Corey", talkToCorey);
-          break;    
-        case "Crutchfield's Office":
-          bg.src = "assets/rooms/crutchfield_office.png";
-          char.src = "assets/characters/crutchfield.png";
-          logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
-          addOption("Talk to Crutchfield", talkToCrutchfield);
-          break;         
+         
+
+          ");
       }
     }
 
