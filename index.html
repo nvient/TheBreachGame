@@ -156,6 +156,99 @@
   }
 }
 
+function talkToCorey() {
+  clearOptions();
+  if (!state.talkedToCorey) {
+    logDialogue("Corey: 'This isn’t my first breach rodeo. What do you need?'");
+    state.talkedToCorey = true;
+    addOption("Ask about any suspicious behavior", () => {
+      clearOptions();
+      logDialogue("Corey: 'Logan came to me about an email that looked weird. I told him not to open it, but who listens to me?'");
+      addClue("Corey warned Logan not to open the suspicious email.");
+    });
+    addOption("Ask about past incidents", () => {
+      clearOptions();
+      logDialogue("Corey: 'HR has had issues with spoofed onboarding emails before. Should've flagged that one faster.'");
+    });
+    addOption("Ask how he’d recognize phishing", () => {
+      clearOptions();
+      logDialogue("Corey: 'URLs are your friend. If it looks sketchy, it probably is. Want me to run a check next time?'");
+    });
+  } else {
+    logDialogue("Corey: 'Back again? I told Logan to leave that link alone.'");
+  }
+}
+
+function talkToCrutchfield() {
+  clearOptions();
+  if (!state.talkedToCrutchfield) {
+    logDialogue("Crutchfield: 'I expected better. This kind of lapse could cost us dearly.'");
+    state.talkedToCrutchfield = true;
+    addOption("Ask about Logan's onboarding process", () => {
+      clearOptions();
+      logDialogue("Crutchfield: 'I delegated it to HR, but I did review the checklist. He should have had phishing training.'");
+      addClue("Crutchfield claims Logan was trained to spot phishing emails.");
+    });
+    addOption("Ask about department response time", () => {
+      clearOptions();
+      logDialogue("Crutchfield: 'We responded within protocol, but the payload executed fast. We’ll need new safeguards.'");
+    });
+    addOption("Ask if anyone else was suspicious", () => {
+      clearOptions();
+      logDialogue("Crutchfield: 'Corey always toes the line. Sometimes too closely, if you ask me.'");
+    });
+  } else {
+    logDialogue("Crutchfield: 'This situation better be resolved quickly.'");
+  }
+}
+
+function talkToReyes() {
+  clearOptions();
+  if (!state.talkedToReyes) {
+    logDialogue("Reyes: 'I’ve worked plenty of cases like this. You learn to see the patterns.'");
+    state.talkedToReyes = true;
+    addOption("Ask about Logan's behavior", () => {
+      clearOptions();
+      logDialogue("Reyes: 'He asked me if onboarding emails usually look that bland. I told him to trust his gut. Guess he didn’t.'");
+      addClue("Reyes warned Logan to trust his instincts about suspicious emails.");
+    });
+    addOption("Ask about training gaps", () => {
+      clearOptions();
+      logDialogue("Reyes: 'Honestly, we need a refresher course for new hires. Things slip through when training is rushed.'");
+    });
+    addOption("Ask about other agents' activity", () => {
+      clearOptions();
+      logDialogue("Reyes: 'Coyle’s been solid, but he's too eager to prove himself. Makes hasty calls sometimes.'");
+    });
+  } else {
+    logDialogue("Reyes: 'Keep digging. The pieces will fit together soon.'");
+  }
+}
+
+function talkToCoyle() {
+  clearOptions();
+  if (!state.talkedToCoyle) {
+    logDialogue("Coyle: 'The server load spiked right after someone clicked that email.'");
+    state.talkedToCoyle = true;
+    addOption("Ask about the server logs", () => {
+      clearOptions();
+      logDialogue("Coyle: 'They show a ransomware payload initiated around 9:03 AM. It spread laterally in seconds.'");
+      addClue("Coyle's logs confirm the attack began shortly after email access.");
+    });
+    addOption("Ask about Logan's message", () => {
+      clearOptions();
+      logDialogue("Coyle: 'He asked me if I thought the file was safe. I skimmed the sender and said yeah... my bad.'");
+      addClue("Coyle admits to okaying Logan's suspicious email without checking.");
+    });
+    addOption("Ask what could've prevented it", () => {
+      clearOptions();
+      logDialogue("Coyle: 'Email filters missed it. We need stronger sandboxing or just better instincts.'");
+    });
+  } else {
+    logDialogue("Coyle: 'I’m running backtraces, but I know I missed something. That’s on me.'");
+  }
+}
+
 function startGame() {
       navigateTo("Lobby");
     }
