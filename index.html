@@ -236,14 +236,34 @@ function talkToCorey() {
       clearOptions();
       logDialogue("Corey: 'Logan came to me about an email that looked weird. I told him not to open it, but who listens to me?'");
       addClue("Corey warned Logan not to open the suspicious email.");
+      addOption("Ask why he didn’t report it to IT", () => {
+        clearOptions();
+        logDialogue("Corey: 'Honestly? I figured he'd be fine. Kid seemed sharp.'");
+      });
     });
     addOption("Ask about past incidents", () => {
       clearOptions();
       logDialogue("Corey: 'HR has had issues with spoofed onboarding emails before. Should've flagged that one faster.'");
+      addOption("Ask who handled those past incidents", () => {
+        clearOptions();
+        logDialogue("Corey: 'Usually Reyes and I. But this time, she was out for the day.'");
+      });
     });
     addOption("Ask how he’d recognize phishing", () => {
       clearOptions();
       logDialogue("Corey: 'URLs are your friend. If it looks sketchy, it probably is. Want me to run a check next time?'");
+      addOption("Ask what makes a URL suspicious", () => {
+        clearOptions();
+        logDialogue("Corey: 'Typos, extra characters, weird domains like .ru instead of .com. Stuff like that.'");
+      });
+    });
+    addOption("Ask if he’s ever clicked something bad", () => {
+      clearOptions();
+      logDialogue("Corey: 'Not since my black hat days. But we all slip up now and then, right?'");
+      addOption("Press him on that comment", () => {
+        clearOptions();
+        logDialogue("Corey: 'Relax, I’m clean now. I use my powers for good. Just trying to help the team.'");
+      });
     });
   } else {
     logDialogue("Corey: 'Back again? I told Logan to leave that link alone.'");
@@ -275,14 +295,40 @@ function talkToCrutchfield() {
 
 function talkToReyes() {
   clearOptions();
-  if (!state.talkedToReyes) {
-    logDialogue("Reyes: 'I’ve worked plenty of cases like this. You learn to see the patterns.'");
-    state.talkedToReyes = true;
+  if (!state.reyesDialogues) {
+    state.reyesDialogues = {
+      behavior: false,
+      training: false,
+      agents: false
+    };
+  }
+  logDialogue("Reyes: 'I’ve worked plenty of cases like this. You learn to see the patterns.'");
+  if (!state.reyesDialogues.behavior) {
     addOption("Ask about Logan's behavior", () => {
       clearOptions();
       logDialogue("Reyes: 'He asked me if onboarding emails usually look that bland. I told him to trust his gut. Guess he didn’t.'");
       addClue("Reyes warned Logan to trust his instincts about suspicious emails.");
+      state.reyesDialogues.behavior = true;
     });
+  }
+  if (!state.reyesDialogues.training) {
+    addOption("Ask about training gaps", () => {
+      clearOptions();
+      logDialogue("Reyes: 'Honestly, we need a refresher course for new hires. Things slip through when training is rushed.'");
+      state.reyesDialogues.training = true;
+    });
+  }
+  if (!state.reyesDialogues.agents) {
+    addOption("Ask about other agents' activity", () => {
+      clearOptions();
+      logDialogue("Reyes: 'Coyle’s been solid, but he's too eager to prove himself. Makes hasty calls sometimes.'");
+      state.reyesDialogues.agents = true;
+    });
+  }
+  if (state.reyesDialogues.behavior && state.reyesDialogues.training && state.reyesDialogues.agents) {
+    logDialogue("Reyes: 'Keep digging. The pieces will fit together soon.'");
+  }
+});
     addOption("Ask about training gaps", () => {
       clearOptions();
       logDialogue("Reyes: 'Honestly, we need a refresher course for new hires. Things slip through when training is rushed.'");
@@ -299,13 +345,42 @@ function talkToReyes() {
 function talkToCoyle() {
   clearOptions();
   if (!state.talkedToCoyle) {
-    logDialogue("Coyle: 'The server load spiked right after someone clicked that email.'");
+    logDialogue("Coyle: 'The server load spiked right after someone clicked that email. Want to dig deeper?'");
     state.talkedToCoyle = true;
     addOption("Ask about the server logs", () => {
       clearOptions();
       logDialogue("Coyle: 'They show a ransomware payload initiated around 9:03 AM. It spread laterally in seconds.'");
       addClue("Coyle's logs confirm the attack began shortly after email access.");
+      addOption("Ask if any logins looked suspicious", () => {
+        clearOptions();
+        logDialogue("Coyle: 'There was one login attempt from Romania, but it didn’t succeed. Could be unrelated.'");
+        addOption("Ask why he didn’t flag it", () => {
+          clearOptions();
+          logDialogue("Coyle: 'It was blocked by geo-filters. I assumed that was enough... maybe I was wrong.'");
+        });
+      });
     });
+    addOption("Ask about Logan's message", () => {
+      clearOptions();
+      logDialogue("Coyle: 'He asked me if I thought the file was safe. I skimmed the sender and said yeah... my bad.'");
+      addClue("Coyle admits to okaying Logan's suspicious email without checking.");
+      addOption("Ask why he didn’t double-check", () => {
+        clearOptions();
+        logDialogue("Coyle: 'I was in the middle of a patch rollout. Didn't want to delay. Dumb move.'");
+      });
+    });
+    addOption("Ask what could've prevented it", () => {
+      clearOptions();
+      logDialogue("Coyle: 'Email filters missed it. We need stronger sandboxing or just better instincts.'");
+      addOption("Ask about the filters", () => {
+        clearOptions();
+        logDialogue("Coyle: 'They're configured, but some things slip through. Spear phishing is tough to catch.'");
+      });
+    });
+  } else {
+    logDialogue("Coyle: 'Still working through the logs. Let me know what else you need.'");
+  }
+});
     addOption("Ask about Logan's message", () => {
       clearOptions();
       logDialogue("Coyle: 'He asked me if I thought the file was safe. I skimmed the sender and said yeah... my bad.'");
