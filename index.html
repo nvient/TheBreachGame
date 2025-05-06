@@ -57,10 +57,10 @@
     }
 
     function addOption(label, callback) {
-      const btn = document.createElement("button");
+      const btn = document.createElement("button;
       btn.textContent = label;
       btn.onclick = callback;
-      document.getElementById("options-box").appendChild(btn);
+      document.getElementById("options-box.appendChild(btn);
     }
 
     function addClue(clue) {
@@ -71,14 +71,14 @@
     }
 
     function viewClueSheet() {
-      const clues = state.clueSheet.map((c, i) => `${i + 1}. ${c}`).join("\n");
-      logDialogue("📋 Clue Sheet:\n" + (clues || "No clues yet."));
+      const clues = state.clueSheet.map((c, i) => `${i + 1}. ${c}`).join("\n;
+      logDialogue("📋 Clue Sheet:\n" + (clues || "No clues yet.);
       clearOptions();
     }
 
     function navigateTo(room) {
-  const bg = document.getElementById("background");
-  const char = document.getElementById("character");
+  const bg = document.getElementById("background;
+  const char = document.getElementById("character;
   clearOptions();
   currentRoom = room;
   highlightRoomButton(room);
@@ -86,25 +86,25 @@
         case "Server Room":
           bg.src = "server_room.png";
           char.src = "coyle.png";
-          logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful.");
+          logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful.;
           addOption("Talk to Coyle", talkToCoyle);
           break;
         case "Lobby":
           bg.src = "lobby.png";
           char.src = "reyes.png";
-          logDialogue("Agent Reyes leans against the reception desk, watching you approach.");
+          logDialogue("Agent Reyes leans against the reception desk, watching you approach.;
           addOption("Talk to Reyes", talkToReyes);
           break;
         case "Main Office":
           bg.src = "main_office.png";
           char.src = "logan.png";
-          logDialogue("You see Logan at his desk, visibly nervous.");
+          logDialogue("You see Logan at his desk, visibly nervous.;
           addOption("Talk to Logan", talkToLogan);
           break;
         case "Break Room":
           bg.src = "break_room.png";
           char.src = "";
-          logDialogue("A quiet room. You notice a USB drive on the table.");
+          logDialogue("A quiet room. You notice a USB drive on the table.;
           addOption("Inspect USB drive", inspectUSB);
           break;
         case "HR Office":
@@ -120,8 +120,6 @@
           addOption("Talk to Crutchfield", talkToCrutchfield);
           break;
          
-
-          ");
       }
     }
 
