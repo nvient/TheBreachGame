@@ -260,11 +260,59 @@ function toggleCluePopup() {
     popup.style.display = "none";
   }
 }
+function submitFinalReport() {
+  const suspect = document.getElementById("culprit-select").value;
+  if (!suspect) {
+    logDialogue("Please select a suspect before submitting.");
+    return;
+  }
+  if (suspect === "Logan") {
+    logDialogue("✅ Correct! Logan clicked the phishing email that triggered the ransomware attack. Great job!");
+  } else {
+    logDialogue(`❌ Incorrect. ${suspect} was not responsible for the breach. Review your clues and try again.`);
+  }
+  clearOptions();
+}
+
+let currentRoom = "";
+
+function highlightRoomButton(room) {
+  document.querySelectorAll("button").forEach(btn => {
+    if (btn.textContent.includes(room)) {
+      btn.style.backgroundColor = "#d0eaff";
+    } else if (btn.textContent.includes("Room")) {
+      btn.style.backgroundColor = "";
+    }
+  });
+}
+
+function startGame() {
+  navigateTo("Lobby");
+  highlightRoomButton("Lobby");
+}
+
+window.onload = startGame;
+
 </script>
 <div id="clue-popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:2px solid #444; padding:20px; max-width:400px; z-index:1000; box-shadow: 0 0 15px rgba(0,0,0,0.3);">
   <h3>Clue Sheet</h3>
   <ul id="clue-list"></ul>
   <button onclick="toggleCluePopup()">Close</button>
+</div>
+
+<!-- Final Report Submission -->
+<div style="margin-top: 20px;">
+  <h2>📝 Final Report</h2>
+  <p>Select the person responsible for the breach:</p>
+  <select id="culprit-select">
+    <option value="">--Choose--</option>
+    <option value="Logan">Logan</option>
+    <option value="Corey">Corey</option>
+    <option value="Crutchfield">Crutchfield</option>
+    <option value="Reyes">Reyes</option>
+    <option value="Coyle">Coyle</option>
+  </select>
+  <button onclick="submitFinalReport()">Submit Report</button>
 </div>
 </body>
 </html>
