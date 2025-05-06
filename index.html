@@ -359,7 +359,106 @@ function talkToCrutchfield() {
   if (state.crutchfieldDialogues.onboarding && state.crutchfieldDialogues.response && state.crutchfieldDialogues.suspicion) {
     logDialogue("Crutchfield: 'Get me results soon. I want this cleaned up before it spreads further.'");
   }
-} function startGame() {
+}
+
+function talkToReyes() {
+  clearOptions();
+  if (!state.reyesDialogues) {
+    state.reyesDialogues = {
+      behavior: false,
+      training: false,
+      agents: false
+    };
+  }
+  logDialogue("Reyes: 'I’ve worked plenty of cases like this. You learn to see the patterns.'");
+  if (!state.reyesDialogues.behavior) {
+    addOption("Ask about Logan's behavior", () => {
+      clearOptions();
+      logDialogue("Reyes: 'He asked me if onboarding emails usually look that bland. I told him to trust his gut. Guess he didn’t.'");
+      addClue("Reyes warned Logan to trust his instincts about suspicious emails.");
+      state.reyesDialogues.behavior = true;
+    });
+  }
+  if (!state.reyesDialogues.training) {
+    addOption("Ask about training gaps", () => {
+      clearOptions();
+      logDialogue("Reyes: 'Honestly, we need a refresher course for new hires. Things slip through when training is rushed.'");
+      state.reyesDialogues.training = true;
+    });
+  }
+  if (!state.reyesDialogues.agents) {
+    addOption("Ask about other agents' activity", () => {
+      clearOptions();
+      logDialogue("Reyes: 'Coyle’s been solid, but he's too eager to prove himself. Makes hasty calls sometimes.'");
+      state.reyesDialogues.agents = true;
+    });
+  }
+  if (state.reyesDialogues.behavior && state.reyesDialogues.training && state.reyesDialogues.agents) {
+    logDialogue("Reyes: 'Keep digging. The pieces will fit together soon.'");
+  }
+}
+
+function talkToCoyle() {
+  clearOptions();
+  if (!state.coyleDialogues) {
+    state.coyleDialogues = {
+      logs: false,
+      logins: false,
+      message: false,
+      filters: false
+    };
+  }
+  logDialogue("Coyle: 'The server load spiked right after someone clicked that email. Want to dig deeper?'");
+
+  if (!state.coyleDialogues.logs) {
+    addOption("Ask about the server logs", () => {
+      clearOptions();
+      logDialogue("Coyle: 'They show a ransomware payload initiated around 9:03 AM. It spread laterally in seconds.'");
+      addClue("Coyle's logs confirm the attack began shortly after email access.");
+      state.coyleDialogues.logs = true;
+      addOption("Ask if any logins looked suspicious", () => {
+        clearOptions();
+        logDialogue("Coyle: 'There was one login attempt from Romania, but it didn’t succeed. Could be unrelated.'");
+        state.coyleDialogues.logins = true;
+        addOption("Ask why he didn’t flag it", () => {
+          clearOptions();
+          logDialogue("Coyle: 'It was blocked by geo-filters. I assumed that was enough... maybe I was wrong.'");
+        });
+      });
+    });
+  }
+
+  if (!state.coyleDialogues.message) {
+    addOption("Ask about Logan's message", () => {
+      clearOptions();
+      logDialogue("Coyle: 'He asked me if I thought the file was safe. I skimmed the sender and said yeah... my bad.'");
+      addClue("Coyle admits to okaying Logan's suspicious email without checking.");
+      state.coyleDialogues.message = true;
+      addOption("Ask why he didn’t double-check", () => {
+        clearOptions();
+        logDialogue("Coyle: 'I was in the middle of a patch rollout. Didn't want to delay. Dumb move.'");
+      });
+    });
+  }
+
+  if (!state.coyleDialogues.filters) {
+    addOption("Ask what could've prevented it", () => {
+      clearOptions();
+      logDialogue("Coyle: 'Email filters missed it. We need stronger sandboxing or just better instincts.'");
+      state.coyleDialogues.filters = true;
+      addOption("Ask about the filters", () => {
+        clearOptions();
+        logDialogue("Coyle: 'They're configured, but some things slip through. Spear phishing is tough to catch.'");
+      });
+    });
+  }
+
+  if (state.coyleDialogues.logs && state.coyleDialogues.message && state.coyleDialogues.filters) {
+    logDialogue("Coyle: 'I’m running backtraces, but I know I missed something. That’s on me.'");
+  }
+}
+
+function startGame() {
       navigateTo("Lobby");
     }
 
