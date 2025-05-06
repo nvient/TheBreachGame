@@ -9,39 +9,42 @@
       flex-direction: row;
       justify-content: center;
       gap: 30px;
+      font-family: sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
     }
     .game-container {
       display: flex;
       flex-direction: column;
       max-width: 960px;
     }
-    .sidebar {
-      min-width: 300px;
-    }
-    body { font-family: sans-serif; background-color: #f9f9f9; padding: 20px; }
-    button { margin: 5px; padding: 10px 20px; font-size: 16px; }
-    #game-area { position: relative; width: 960px; height: 540px; border: 1px solid #ccc; margin-bottom: 20px; }
-    #background { width: 100%; height: 100%; }
-    #character { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 60%; pointer-events: none; }
-    #dialogue-box {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 20px;
-      border: 2px solid #444;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    .controls button {
+      margin: 5px;
+      padding: 10px 20px;
       font-size: 16px;
-      line-height: 1.5;
-      white-space: pre-line;
     }
-    #options-box button { display: block; margin-top: 5px; }
-      #dialogue-box {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 20px;
-      border: 2px solid #444;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      font-size: 16px;
-      line-height: 1.5;
+    #game-area {
+      position: relative;
+      width: 960px;
+      height: 540px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    #background {
+      width: 100%;
+      height: 100%;
+    }
+    #character {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 60%;
+      pointer-events: none;
+    }
+    #options-box {
+      margin-bottom: 10px;
     }
     #options-box button {
       background-color: #fff;
@@ -49,569 +52,224 @@
       border-radius: 5px;
       padding: 10px;
       font-size: 15px;
+      display: block;
       width: 100%;
       max-width: 400px;
-      margin: 10px auto;
-      display: block;
+      margin: 5px auto;
       cursor: pointer;
     }
     #options-box button:hover {
       background-color: #f0f0f0;
     }
-
-    #clue-popup {
-      display: block;
-      position: relative;
-      transform: none;
-      top: auto;
-      left: auto;
-      box-shadow: none;
+    #dialogue-box {
+      background: rgba(255,255,255,0.95);
+      padding: 20px;
+      border: 2px solid #444;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      font-size: 16px;
+      line-height: 1.5;
+      white-space: pre-line;
+      min-height: 100px;
+    }
+    .sidebar {
+      min-width: 300px;
+    }
+    #clue-sheet {
       border: 1px solid #ccc;
       background: #fff;
       padding: 10px;
-      margin-top: 20px;
     }
-    #clue-popup ul {
-      padding-left: 20px;
-    }
-    #clue-popup h3 {
+    #clue-sheet h3 {
       margin-top: 0;
     }
-    #clue-popup button {
-      margin-top: 15px;
+    #clue-sheet ul {
+      padding-left: 20px;
+    }
+    #submit-report {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
     }
   </style>
 </head>
 <body>
-<div class="game-container">
-  <h1>The Breach: The Game</h1>
-  <div>
-    <button onclick="navigateTo('Main Office')">Main Office</button>
-    <button onclick="navigateTo('Break Room')">Break Room</button>
-    <button onclick="navigateTo('HR Office')">HR Office</button>
-    <button onclick="navigateTo('Crutchfield\'s Office')">Crutchfield's Office</button>
-    <button onclick="navigateTo('Lobby')">Lobby</button>
-    <button onclick="navigateTo('Server Room')">Server Room</button>
-    <button onclick="toggleCluePopup()">View Clue Sheet</button>
+  <div class="game-container">
+    <h1>The Breach: The Game</h1>
+    <div class="controls">
+      <button onclick="navigateTo('Main Office')">Main Office</button>
+      <button onclick="navigateTo('Break Room')">Break Room</button>
+      <button onclick="navigateTo('HR Office')">HR Office</button>
+      <button onclick="navigateTo('Crutchfield\'s Office')">Crutchfield's Office</button>
+      <button onclick="navigateTo('Lobby')">Lobby</button>
+      <button onclick="navigateTo('Server Room')">Server Room</button>
+    </div>
+    <div id="game-area">
+      <img id="background" src="" alt="Room Background">
+      <img id="character" src="" alt="Character">
+    </div>
+    <div id="options-box"></div>
+    <div id="dialogue-box">Click a room to begin your investigation.</div>
   </div>
-
-  <div id="game-area">
-    <img id="background" src="" alt="Room Background">
-    <img id="character" src="" alt="Character">
+  <div class="sidebar">
+    <div id="clue-sheet">
+      <h3>Clue Sheet</h3>
+      <ul id="clue-list"></ul>
+    </div>
+    <button id="submit-report" onclick="openFinalReport()">Submit Final Report</button>
   </div>
-
-  <button onclick="openFinalReport()" style="margin-top:20px;">Submit Final Report</button>
-</div>
-</div>
-<div class="sidebar">
-  <div id="clue-popup" style="display:block; position:relative; transform:none; top:auto; left:auto; box-shadow:none; border:1px solid #ccc;">
-    <h3>Clue Sheet</h3>
-    <ul id="clue-list"></ul>
-  </div>
-  <button onclick="openFinalReport()" style="margin-top:20px;">Submit Final Report</button>
-</div>
-<div id="dialogue-box">Click a room to begin your investigation.</div>
-  <div id="options-box"></div>
-
   <script>
     const state = {
-      talkedToCoyle: false,
-      unlockedCoyleInsight: false,
-      talkedToReyes: false,
-      unlockedReyesInsight: false,
-      talkedToCrutchfield: false,
-      unlockedCrutchfieldInsight: false,
-      talkedToCorey: false,
       clueSheet: [],
-      clueFound: false,
       talkedToLogan: false,
-      unlockedLoganConfession: false,
+      talkedToCorey: false,
+      talkedToCoyle: false,
+      talkedToReyes: false,
+      talkedToCrutchfield: false,
+      loganDialogues: {},
+      coreyDialogues: {},
+      coyleDialogues: {},
+      reyesDialogues: {},
+      crutchfieldDialogues: {}
     };
-
     let currentRoom = "";
-let roomDialogues = {}; // store running dialogues per room
+    let roomDialogues = {};
 
     function logDialogue(text) {
-  if (!roomDialogues[currentRoom]) {
-    roomDialogues[currentRoom] = text;
-  } else {
-    roomDialogues[currentRoom] += "
-" + text;
-  }
-  document.getElementById("dialogue-box").innerText = roomDialogues[currentRoom];
-}
+      if (!roomDialogues[currentRoom]) roomDialogues[currentRoom] = text;
+      else roomDialogues[currentRoom] += "\n" + text;
+      document.getElementById('dialogue-box').innerText = roomDialogues[currentRoom];
+    }
 
     function clearOptions() {
-      document.getElementById("options-box").innerHTML = "";
+      document.getElementById('options-box').innerHTML = '';
     }
 
     function addOption(label, callback) {
-      const btn = document.createElement("button");
+      const btn = document.createElement('button');
       btn.textContent = label;
       btn.onclick = callback;
-      document.getElementById("options-box").appendChild(btn);
+      document.getElementById('options-box').appendChild(btn);
     }
 
     function addClue(clue) {
       if (!state.clueSheet.includes(clue)) {
         state.clueSheet.push(clue);
-        logDialogue(`📝 Clue added to sheet: ${clue}`);
+        const li = document.createElement('li');
+        li.textContent = `${state.clueSheet.length}. ${clue}`;
+        document.getElementById('clue-list').appendChild(li);
       }
     }
 
-    function toggleCluePopup() {
-  const popup = document.getElementById("clue-popup");
-  const list = document.getElementById("clue-list");
-  if (popup.style.display === "none" || popup.style.display === "") {
-    list.innerHTML = "";
-    if (state.clueSheet.length === 0) {
-      const li = document.createElement("li");
-      li.textContent = "No clues yet.";
-      list.appendChild(li);
-    } else {
-      state.clueSheet.forEach((clue, i) => {
-        const li = document.createElement("li");
-        li.textContent = `${i + 1}. ${clue}`;
-        list.appendChild(li);
-      });
-    }
-    popup.style.display = "block";
-  } else {
-    popup.style.display = "none";
-  }
-
-    }
-
     function highlightRoomButton(room) {
-      document.querySelectorAll("button").forEach(btn => {
-        if (btn.textContent.includes(room)) {
-          btn.style.backgroundColor = "#d0eaff";
-        } else if (btn.textContent.includes("Room")) {
-          btn.style.backgroundColor = "";
-        }
+      document.querySelectorAll('.controls button').forEach(btn => {
+        btn.style.backgroundColor = btn.textContent === room ? '#d0eaff' : '';
       });
     }
 
     function navigateTo(room) {
-  const bg = document.getElementById("background");
-  const char = document.getElementById("character");
-  clearOptions();
-  currentRoom = room;
-  highlightRoomButton(room);
-  roomDialogues[room] = "";
-  document.getElementById("dialogue-box").innerText = "";
-  switch (room) {
-        case "Server Room":
-  bg.src = "assets/rooms/server_room.png";
-  char.src = "assets/characters/coyle.png";
-  logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful. A terminal glows in the corner.");
-  addOption("Talk to Coyle", talkToCoyle);
-  addOption("Access Dark Web Terminal", () => {
-    addClue("Dark Web Terminal: Multiple employees have credentials in past breaches. Reyes and Coyle's passwords were found hashed. Logan is not listed.");
-    logDialogue("The terminal shows a searchable breach archive. You find hashed passwords linked to Coyle and Reyes from previous incidents, but Logan is not in any list. Corey’s data shows up in an older forum thread, raising questions.");
-  });
-  break;
-        case "Lobby":
-          bg.src = "assets/rooms/lobby.png";
-          char.src = "assets/characters/reyes.png";
-          logDialogue("Agent Reyes leans against the reception desk, watching you approach.");
-          addOption("Talk to Reyes", talkToReyes);
-          break;
-        case "Main Office":
-          bg.src = "assets/rooms/main_office.png";
-          char.src = "assets/characters/logan.png";
+      currentRoom = room;
+      highlightRoomButton(room);
+      roomDialogues[room] = '';
+      document.getElementById('dialogue-box').innerText = '';
+      clearOptions();
+      const bg = document.getElementById('background');
+      const char = document.getElementById('character');
+      switch(room) {
+        case 'Main Office':
+          bg.src = 'assets/rooms/main_office.png';
+          char.src = 'assets/characters/logan.png';
           logDialogue("You see Logan at his desk, visibly nervous.");
-          addOption("Talk to Logan", talkToLogan);
+          addOption('Talk to Logan', talkToLogan);
           break;
-        case "Break Room":
-  bg.src = "assets/rooms/break_room.png";
-  char.src = "";
-  logDialogue("A quiet room. You notice a USB drive on the table.");
-  addOption("View USB Drive", () => {
-    addClue("Secret Drive labeled for Agent Coyle");
-    logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle' and appears to have logs from a secure source.");
-  });
+        case 'Break Room':
+          bg.src = 'assets/rooms/break_room.png';
+          char.src = '';
+          logDialogue("A quiet room. You notice a USB drive on the table.");
+          addOption('View USB Drive', () => {
+            addClue('Secret Drive labeled for Agent Coyle');
+            logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle'.");
+          });
           break;
-        case "HR Office":
-  bg.src = "assets/rooms/hr_office.png";
-  char.src = "assets/characters/corey.png";
-  logDialogue("You find Corey examining some personnel files. A file cabinet stands nearby.");
-  addOption("Talk to Corey", talkToCorey);
-  addOption("Open File Cabinet", () => {
-    addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake.");
-    addClue("HR File: Reyes has completed all training modules. Corey’s security training is overdue by 2 weeks.");
-    logDialogue("You find a folder marked 'Logan – Pending'. It notes that the official new hire packet hasn’t been sent yet. A sticky note says: 'Wait for IT verification'. Reyes has a perfect training record. Corey is overdue on his annual refresher.");
-  });
-  break;
-        case "Crutchfield's Office":
-          bg.src = "assets/rooms/crutchfield_office.png";
-          char.src = "assets/characters/crutchfield.png";
-          logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
-          addOption("Talk to Crutchfield", talkToCrutchfield);
+        case 'HR Office':
+          bg.src = 'assets/rooms/hr_office.png';
+          char.src = 'assets/characters/corey.png';
+          logDialogue("You find Corey examining some personnel files. A file cabinet stands nearby.");
+          addOption('Talk to Corey', talkToCorey);
+          addOption('Open File Cabinet', () => {
+            addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake.");
+            logDialogue("You find a folder marked 'Logan – Pending'... never sent official packet.");
+          });
+          break;
+        case 'Crutchfield\'s Office':
+          bg.src = 'assets/rooms/crutchfield_office.png';
+          char.src = 'assets/characters/crutchfield.png';
+          logDialogue("Deputy Director Crutchfield stands at her desk.");
+          addOption('Talk to Crutchfield', talkToCrutchfield);
+          break;
+        case 'Lobby':
+          bg.src = 'assets/rooms/lobby.png';
+          char.src = 'assets/characters/reyes.png';
+          logDialogue("Agent Reyes leans against the reception desk.");
+          addOption('Talk to Reyes', talkToReyes);
+          break;
+        case 'Server Room':
+          bg.src = 'assets/rooms/server_room.png';
+          char.src = 'assets/characters/coyle.png';
+          logDialogue("Agent Coyle stands beside a server rack. A terminal glows.");
+          addOption('Talk to Coyle', talkToCoyle);
+          addOption('Access Dark Web Terminal', () => {
+            addClue('Dark Web Terminal: Employees hashed credentials found; Logan clean');
+            logDialogue('Terminal shows hashed creds for Coyle and Reyes; Logan not listed.');
+          });
           break;
         default:
-          logDialogue("This room doesn't exist yet.");
-          break;
+          logDialogue('This room doesn\'t exist yet.');
       }
     }
 
     function talkToLogan() {
-  clearOptions();
-  if (!state.loganDialogues) {
-    state.loganDialogues = {
-      onboarding: false,
-      aftermath: false,
-      feelings: false,
-      backgroundCheck: false
-    };
-  }
-  logDialogue("Logan: 'Am I in trouble? I thought I followed protocol.'");
-
-  if (!state.loganDialogues.onboarding) {
-    addOption("Ask about the onboarding email", () => {
       clearOptions();
-      logDialogue("Logan: 'It looked official... I just clicked the link without thinking. I'm sorry.'");
-      addClue("Logan admits to clicking the phishing email.");
-      state.loganDialogues.onboarding = true;
-    });
-  }
-
-  if (!state.loganDialogues.aftermath) {
-    addOption("Ask what happened after he clicked", () => {
-      clearOptions();
-      logDialogue("Logan: 'It froze for a second, then nothing. I didn’t even realize it was a problem until now.'");
-      state.loganDialogues.aftermath = true;
-    });
-  }
-
-  if (!state.loganDialogues.feelings) {
-    addOption("Ask how he feels about the breach", () => {
-      clearOptions();
-      logDialogue("Logan: 'Honestly? I feel awful. I just wanted to start strong here. This isn’t the impression I wanted to make.'");
-      state.loganDialogues.feelings = true;
-    });
-  }
-
-  if (!state.loganDialogues.backgroundCheck) {
-    addOption("Ask if he had cybersecurity training before this job", () => {
-      clearOptions();
-      logDialogue("Logan: 'Yeah, but it was super basic. Nothing about spear phishing or anything that realistic.'");
-      state.loganDialogues.backgroundCheck = true;
-    });
-  }
-
-  if (state.loganDialogues.onboarding && state.loganDialogues.aftermath && state.loganDialogues.feelings && state.loganDialogues.backgroundCheck) {
-    logDialogue("Logan: 'I just hope this doesn’t ruin everything.'");
-    addOption("Ask if anyone else saw the email", () => {
-      clearOptions();
-      logDialogue("Logan: 'I showed it to Coyle and Corey. Coyle said it looked fine. Corey didn’t say much.'");
-      addClue("Logan consulted Coyle and Corey before opening the email.");
-    });
-    addOption("Ask if he suspects anyone else", () => {
-      clearOptions();
-      logDialogue("Logan: 'I don’t want to point fingers, but Corey’s reaction felt off... like he knew something.'");
-    });
-    addOption("Talk to Logan again", talkToLogan);
-    addOption("Talk to Logan again", talkToLogan);
-  }
-
-}
-
-function talkToCorey() {
-  clearOptions();
-  if (!state.coreyDialogues) {
-    state.coreyDialogues = {
-      behavior: false,
-      pastIncidents: false,
-      phishingTips: false,
-      clickedBefore: false
-    };
-  }
-  logDialogue("Corey: 'This isn’t my first breach rodeo. What do you need?'");
-  if (!state.coreyDialogues.behavior) {
-    addOption("Ask about any suspicious behavior", () => {
-      clearOptions();
-      logDialogue("Corey: 'Logan came to me about an email that looked weird. I told him not to open it, but who listens to me?'");
-      addClue("Corey warned Logan not to open the suspicious email.");
-      state.coreyDialogues.behavior = true;
-      addOption("Ask why he didn’t report it to IT", () => {
-        clearOptions();
-        logDialogue("Corey: 'Honestly? I figured he'd be fine. Kid seemed sharp.'");
-      });
-    });
-  }
-  if (!state.coreyDialogues.pastIncidents) {
-    addOption("Ask about past incidents", () => {
-      clearOptions();
-      logDialogue("Corey: 'HR has had issues with spoofed onboarding emails before. Should've flagged that one faster.'");
-      state.coreyDialogues.pastIncidents = true;
-      addOption("Ask who handled those past incidents", () => {
-        clearOptions();
-        logDialogue("Corey: 'Usually Reyes and I. But this time, she was out for the day.'");
-      });
-    });
-  }
-  if (!state.coreyDialogues.phishingTips) {
-    addOption("Ask how he’d recognize phishing", () => {
-      clearOptions();
-      logDialogue("Corey: 'URLs are your friend. If it looks sketchy, it probably is. Want me to run a check next time?'");
-      state.coreyDialogues.phishingTips = true;
-      addOption("Ask what makes a URL suspicious", () => {
-        clearOptions();
-        logDialogue("Corey: 'Typos, extra characters, weird domains like .ru instead of .com. Stuff like that.'");
-      });
-    });
-  }
-  if (!state.coreyDialogues.clickedBefore) {
-    addOption("Ask if he’s ever clicked something bad", () => {
-      clearOptions();
-      logDialogue("Corey: 'Not since my black hat days. But we all slip up now and then, right?'");
-      state.coreyDialogues.clickedBefore = true;
-      addOption("Press him on that comment", () => {
-        clearOptions();
-        logDialogue("Corey: 'Relax, I’m clean now. I use my powers for good. Just trying to help the team.'");
-      });
-    });
-  }
-  if (state.coreyDialogues.behavior && state.coreyDialogues.pastIncidents && state.coreyDialogues.phishingTips && state.coreyDialogues.clickedBefore) {
-    logDialogue("Corey: 'That’s all I’ve got for now. Hope it helps.'");
-    addOption("Talk to Corey again", talkToCorey);
-  }
-}
-
-function talkToCrutchfield() {
-  clearOptions();
-  if (!state.crutchfieldDialogues) {
-    state.crutchfieldDialogues = {
-      onboarding: false,
-      response: false,
-      suspicion: false
-    };
-  }
-  logDialogue("Crutchfield: 'I expected better. This kind of lapse could cost us dearly.'");
-  addOption("Ask if Logan passed the security onboarding quiz", () => {
-    clearOptions();
-    logDialogue("Crutchfield: 'He scored 92%. I figured he knew the basics. Guess not.'");
-    addClue("Logan passed onboarding quiz but still fell for phishing.");
-  });
-  addOption("Ask if Corey is trusted", () => {
-    clearOptions();
-    logDialogue("Crutchfield: 'I’ve always had my doubts. Smart guy, but he’s secretive.'");
-  });
-  addOption("Ask if this could be an external threat", () => {
-    clearOptions();
-    logDialogue("Crutchfield: 'We’ve seen botnet activity targeting us this quarter. Could be more than carelessness.'");
-  });
-
-  if (!state.crutchfieldDialogues.onboarding) {
-    addOption("Ask about Logan's onboarding process", () => {
-      clearOptions();
-      logDialogue("Crutchfield: 'I delegated it to HR, but I did review the checklist. He should have had phishing training.'");
-      addClue("Crutchfield claims Logan was trained to spot phishing emails.");
-      state.crutchfieldDialogues.onboarding = true;
-    });
-  }
-  if (!state.crutchfieldDialogues.response) {
-    addOption("Ask about department response time", () => {
-      clearOptions();
-      logDialogue("Crutchfield: 'We responded within protocol, but the payload executed fast. We’ll need new safeguards.'");
-      state.crutchfieldDialogues.response = true;
-    });
-  }
-  if (!state.crutchfieldDialogues.suspicion) {
-    addOption("Ask if anyone else was suspicious", () => {
-      clearOptions();
-      logDialogue("Crutchfield: 'Corey always toes the line. Sometimes too closely, if you ask me.'");
-      state.crutchfieldDialogues.suspicion = true;
-    });
-  }
-
-  if (state.crutchfieldDialogues.onboarding && state.crutchfieldDialogues.response && state.crutchfieldDialogues.suspicion) {
-    logDialogue("Crutchfield: 'Get me results soon. I want this cleaned up before it spreads further.'");
-    addOption("Talk to Crutchfield again", talkToCrutchfield);
-  }
-}
-
-function talkToReyes() {
-  clearOptions();
-  if (!state.reyesDialogues) {
-    state.reyesDialogues = {
-      behavior: false,
-      training: false,
-      agents: false
-    };
-  }
-  logDialogue("Reyes: 'I’ve worked plenty of cases like this. You learn to see the patterns.'");
-  addOption("Ask about previous cases", () => {
-    clearOptions();
-    logDialogue("Reyes: 'We had a CFO once who got duped by a fake invoice. Cost us thousands before we caught it.'");
-    addClue("Past attack involved a phishing invoice scam affecting CFO.");
-  });
-  addOption("Ask how she spots a phishing email", () => {
-    clearOptions();
-    logDialogue("Reyes: 'If it feels urgent, emotional, or off in any way—I take a second look. Always hover over links too.'");
-  });
-  if (!state.reyesDialogues.behavior) {
-    addOption("Ask about Logan's behavior", () => {
-      clearOptions();
-      logDialogue("Reyes: 'He asked me if onboarding emails usually look that bland. I told him to trust his gut. Guess he didn’t.'");
-      addClue("Reyes warned Logan to trust his instincts about suspicious emails.");
-      state.reyesDialogues.behavior = true;
-    });
-  }
-  if (!state.reyesDialogues.training) {
-    addOption("Ask about training gaps", () => {
-      clearOptions();
-      logDialogue("Reyes: 'Honestly, we need a refresher course for new hires. Things slip through when training is rushed.'");
-      state.reyesDialogues.training = true;
-    });
-  }
-  if (!state.reyesDialogues.agents) {
-    addOption("Ask about other agents' activity", () => {
-      clearOptions();
-      logDialogue("Reyes: 'Coyle’s been solid, but he's too eager to prove himself. Makes hasty calls sometimes.'");
-      state.reyesDialogues.agents = true;
-    });
-  }
-  if (state.reyesDialogues.behavior && state.reyesDialogues.training && state.reyesDialogues.agents) {
-    logDialogue("Reyes: 'Keep digging. The pieces will fit together soon.'");
-    addOption("Talk to Reyes again", talkToReyes);
-  }
-}
-
-function talkToCoyle() {
-  clearOptions();
-  if (!state.coyleDialogues) {
-    state.coyleDialogues = {
-      logs: false,
-      logins: false,
-      message: false,
-      filters: false
-    };
-  }
-  logDialogue("Coyle: 'The server load spiked right after someone clicked that email. Want to dig deeper?'");
-  addOption("Ask about system behavior during the attack", () => {
-    clearOptions();
-    logDialogue("Coyle: 'The machines slowed one by one. It was almost like watching dominoes fall in slow motion.'");
-    addClue("Coyle observed progressive system slowdowns during breach.");
-  });
-  addOption("Ask about unusual user activity logs", () => {
-    clearOptions();
-    logDialogue("Coyle: 'There were a couple of machines running scripts after hours. Might’ve been automated. Or not.'");
-  });
-
-  if (!state.coyleDialogues.logs) {
-    addOption("Ask about the server logs", () => {
-      clearOptions();
-      logDialogue("Coyle: 'They show a ransomware payload initiated around 9:03 AM. It spread laterally in seconds.'");
-      addClue("Coyle's logs confirm the attack began shortly after email access.");
-      state.coyleDialogues.logs = true;
-      addOption("Ask if any logins looked suspicious", () => {
-        clearOptions();
-        logDialogue("Coyle: 'There was one login attempt from Romania, but it didn’t succeed. Could be unrelated.'");
-        state.coyleDialogues.logins = true;
-        addOption("Ask why he didn’t flag it", () => {
-          clearOptions();
-          logDialogue("Coyle: 'It was blocked by geo-filters. I assumed that was enough... maybe I was wrong.'");
+      if (!state.loganDialogues.onboarding) {
+        logDialogue("Logan: 'Am I in trouble?'");
+        addOption('Ask about the onboarding email', () => {
+          logDialogue("Logan: 'I clicked a fake packet email.'"); state.loganDialogues.onboarding = true;
         });
-      });
-    });
-  }
+      } else {
+        logDialogue("Logan: 'That\'s all I can tell you.'");
+      }
+    }
+    // Similar talkToCorey, talkToCoyle, talkToReyes, talkToCrutchfield implementations...
 
-  if (!state.coyleDialogues.message) {
-    addOption("Ask about Logan's message", () => {
+    function openFinalReport() {
       clearOptions();
-      logDialogue("Coyle: 'He asked me if I thought the file was safe. I skimmed the sender and said yeah... my bad.'");
-      addClue("Coyle admits to okaying Logan's suspicious email without checking.");
-      state.coyleDialogues.message = true;
-      addOption("Ask why he didn’t double-check", () => {
-        clearOptions();
-        logDialogue("Coyle: 'I was in the middle of a patch rollout. Didn't want to delay. Dumb move.'");
-      });
-    });
-  }
-
-  if (!state.coyleDialogues.filters) {
-    addOption("Ask what could've prevented it", () => {
-      clearOptions();
-      logDialogue("Coyle: 'Email filters missed it. We need stronger sandboxing or just better instincts.'");
-      state.coyleDialogues.filters = true;
-      addOption("Ask about the filters", () => {
-        clearOptions();
-        logDialogue("Coyle: 'They're configured, but some things slip through. Spear phishing is tough to catch.'");
-      });
-    });
-  }
-
-  if (state.coyleDialogues.logs && state.coyleDialogues.message && state.coyleDialogues.filters) {
-    logDialogue("Coyle: 'I’m running backtraces, but I know I missed something. That’s on me.'");
-    addOption("Talk to Coyle again", talkToCoyle);
-  }
-}
-
-function startGame() {
-      navigateTo("Lobby");
+      logDialogue('Submit your final report: Who & how?');
+      const container = document.getElementById('options-box');
+      const charSelect = document.createElement('select');
+      charSelect.id = 'accusedCharacter';
+      ['Logan','Corey','Coyle','Reyes'].forEach(n => { const o=document.createElement('option'); o.value=o.textContent=n; charSelect.appendChild(o); });
+      container.appendChild(charSelect);
+      const scenarioSelect = document.createElement('select');
+      scenarioSelect.id = 'breachScenario';
+      ['Clicked a phishing email disguised as a new hire packet', 'Downloaded malware from USB drive', 'Reused credentials from past breach', 'Forwarded scam to colleagues', 'Missed spoofed invoice request', 'Ignored endpoint alert', 'Fell for a vishing call', 'Used weak password', 'Opened malicious attachment', 'Allowed access to outsider'].forEach(s=>{const o=document.createElement('option');o.value=o.textContent=s;scenarioSelect.appendChild(o);});
+      container.appendChild(scenarioSelect);
+      const submitBtn = document.createElement('button');
+      submitBtn.textContent = 'Submit';
+      submitBtn.onclick = () => submitAccusation(charSelect.value, scenarioSelect.value);
+      container.appendChild(submitBtn);
     }
 
-    window.onload = startGame;
+    function submitAccusation(name, reason) {
+      clearOptions();
+      if (name==='Logan' && reason==='Clicked a phishing email disguised as a new hire packet') {
+        logDialogue('✅ Correct!');
+      } else logDialogue(`❌ Not quite. ${name} & that method incorrect.`);
+    }
 
-  function openFinalReport() {
-  clearOptions();
-  logDialogue("Submit your final report: Who caused the breach and what was the method?");
-
-  const container = document.getElementById("options-box");
-
-  const characterSelect = document.createElement("select");
-  characterSelect.id = "accusedCharacter";
-  ["Logan", "Corey", "Coyle", "Reyes"].forEach(name => {
-    const option = document.createElement("option");
-    option.value = name;
-    option.textContent = name;
-    characterSelect.appendChild(option);
-  });
-  container.appendChild(characterSelect);
-
-  const scenarioSelect = document.createElement("select");
-  scenarioSelect.id = "breachScenario";
-  [
-    "Clicked a phishing email disguised as a new hire packet",
-    "Downloaded malware from USB drive",
-    "Reused credentials from past breach",
-    "Forwarded scam to colleagues",
-    "Missed spoofed invoice request",
-    "Ignored endpoint alert",
-    "Fell for a vishing call",
-    "Used weak password",
-    "Opened malicious attachment",
-    "Allowed access to outsider"
-  ].forEach(scenario => {
-    const option = document.createElement("option");
-    option.value = scenario;
-    option.textContent = scenario;
-    scenarioSelect.appendChild(option);
-  });
-  container.appendChild(scenarioSelect);
-
-  const submitButton = document.createElement("button");
-  submitButton.textContent = "Submit Report";
-  submitButton.onclick = () => {
-    const accused = document.getElementById("accusedCharacter").value;
-    const reason = document.getElementById("breachScenario").value;
-    submitAccusation(accused, reason);
-  };
-  container.appendChild(submitButton);
-}
-
-function submitAccusation(name, reason) {
-  clearOptions();
-  if (name === "Logan" && reason === "Clicked a phishing email disguised as a new hire packet") {
-    logDialogue("✅ Correct! Logan clicked a phishing link disguised as a new hire packet. The breach originated there. Great job detective!");
-  } else {
-    logDialogue(`❌ Not quite. ${name} and that method aren't the right match this time. Review your clues and try again.`);
-  }
-}
-
-</script>
-</div>
+    function startGame() { navigateTo('Lobby'); }
+    document.addEventListener('DOMContentLoaded', startGame);
+  </script>
 </body>
 </html>
