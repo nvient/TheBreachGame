@@ -48,6 +48,8 @@
       unlockedLoganConfession: false,
     };
 
+    let currentRoom = "";
+
     function logDialogue(text) {
       document.getElementById("dialogue-box").innerText = text;
     }
@@ -76,244 +78,71 @@
       clearOptions();
     }
 
-    function navigateTo(room) {
-  const bg = document.getElementById("background");
-  const char = document.getElementById("character");
-  clearOptions();
-  currentRoom = room;
-  highlightRoomButton(room);
-  switch (room) {
-    case "Server Room":
-      bg.src = "assets/rooms/server_room.png";
-      char.src = "assets/characters/coyle.png";
-      logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful.");
-      addOption("Talk to Coyle", talkToCoyle);
-      break;
-    case "Lobby":
-      bg.src = "assets/rooms/lobby.png";
-      char.src = "assets/characters/reyes.png";
-      logDialogue("Agent Reyes leans against the reception desk, watching you approach.");
-      addOption("Talk to Reyes", talkToReyes);
-      break;
-    case "Main Office":
-      bg.src = "assets/rooms/main_office.png";
-      char.src = "assets/characters/logan.png";
-      logDialogue("You see Logan at his desk, visibly nervous.");
-      addOption("Talk to Logan", talkToLogan);
-      break;
-    case "Break Room":
-      bg.src = "assets/rooms/break_room.png";
-      char.src = "";
-      logDialogue("A quiet room. You notice a USB drive on the table.");
-      addOption("Inspect USB drive", inspectUSB);
-      break;
-    case "HR Office":
-      bg.src = "assets/rooms/hr_office.png";
-      char.src = "assets/characters/corey.png";
-      logDialogue("You find Corey examining some personnel files.");
-      addOption("Talk to Corey", talkToCorey);
-      break;
-    case "Crutchfield's Office":
-      bg.src = "assets/rooms/crutchfield_office.png";
-      char.src = "assets/characters/crutchfield.png";
-      logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
-      addOption("Talk to Crutchfield", talkToCrutchfield);
-      break;
-    default:
-      logDialogue("This room doesn't exist yet.");
-      break;
-  }
-}
-          break;
-         
-
-          ");
-      }
-    }
-
-    function talkToLogan() {
-      clearOptions();
-      if (!state.talkedToLogan) {
-        logDialogue("Logan: 'Am I in trouble? I thought I followed protocol.'");
-        state.talkedToLogan = true;
-      } else if (state.clueFound && !state.unlockedLoganConfession) {
-        logDialogue("Logan: 'Okay… I clicked the email. I thought it was real. I'm so sorry.'");
-        state.unlockedLoganConfession = true;
-        addClue("Logan admits to clicking a phishing email.");
-      } else {
-        logDialogue("Logan: 'I hope you find something useful.'");
-      }
-    }
-
-    function inspectUSB() {
-      clearOptions();
-      logDialogue("You examine the USB drive. It contains music files and was plugged in after the breach.");
-      state.clueFound = true;
-      addClue("USB drive is a red herring, post-breach use only.");
-    }
-
-    function talkToCorey() {
-      clearOptions();
-      if (!state.talkedToCorey) {
-        logDialogue("Corey: 'Could be a fluke, could be an insider. Everyone's got secrets.'");
-        state.talkedToCorey = true;
-        addOption("Ask about Logan", () => {
-          clearOptions();
-          logDialogue("Corey: 'He seemed confused. Kept double-checking his welcome email… you know what that usually means.'");
-          addClue("Corey noted Logan double-checking his onboarding email.");
-        });
-        addOption("Ask about threats", () => {
-          clearOptions();
-          logDialogue("Corey: 'Phishing is emotional warfare. Fear, urgency. You’d be amazed what panic unlocks.'");
-          addClue("Corey described phishing as emotional manipulation.");
-        });
-      } else {
-        logDialogue("Corey: 'I'm not pointing fingers… but someone wasn't paying attention.'");
-      }
-    }
-
-    function talkToCrutchfield() {
-      clearOptions();
-      if (!state.talkedToCrutchfield) {
-        logDialogue("Crutchfield: 'Don’t ask me for guesses. Ask me for facts.'");
-        state.talkedToCrutchfield = true;
-        addOption("Ask about the breach origin", () => {
-          clearOptions();
-          logDialogue("Crutchfield: 'Initial logs show it started from a workstation during onboarding. I suspect someone fell for a fake packet.'");
-          addClue("Crutchfield confirms breach originated during onboarding phase.");
-        });
-        addOption("Ask about Logan's access", () => {
-          clearOptions();
-          logDialogue("Crutchfield: 'We granted basic network access. No admin rights. But enough to spread ransomware.'");
-          addClue("Crutchfield confirmed Logan had access to core network services.");
-        });
-      } else {
-        logDialogue("Crutchfield: 'You have your leads. Follow them, don't circle back here unless needed.'");
-      }
-    });
-        addOption("Ask about threats", () => {
-          clearOptions();
-          logDialogue("Corey: 'Phishing is emotional warfare. Fear, urgency. You’d be amazed what panic unlocks.'");
-          addClue("Corey described phishing as emotional manipulation.");
-        });
-      } else {
-        logDialogue("Corey: 'I'm not pointing fingers… but someone wasn't paying attention.'");
-      }
-    }
-      function talkToReyes() {
-      clearOptions();
-      if (!state.talkedToReyes) {
-        logDialogue("Reyes: 'I flagged something last week. Could’ve been related.'");
-        state.talkedToReyes = true;
-        addOption("Ask about Logan's behavior", () => {
-          clearOptions();
-          logDialogue("Reyes: 'He asked me how to verify a sender. I told him to look closely at the email domain. Guess that wasn’t enough.'");
-          addClue("Reyes warned Logan about checking domains.");
-        });
-        addOption("Ask about past incidents", () => {
-          clearOptions();
-          logDialogue("Reyes: 'We’ve had fake onboarding emails before. This one must’ve slipped through the filters.'");
-          addClue("Reyes recalls similar phishing attempts in the past.");
-        });
-      } else {
-        logDialogue("Reyes: 'I’ve said my part. The rest is up to you.'");
-      }
-    }
-
-    function talkToCoyle() {
-      clearOptions();
-      if (!state.talkedToCoyle) {
-        logDialogue("Coyle: 'I checked the cables twice. I didn’t think it was a user issue.'");
-        state.talkedToCoyle = true;
-        addOption("Ask about Logan's request", () => {
-          clearOptions();
-          logDialogue("Coyle: 'He messaged me about whether a file looked suspicious. I said it was probably fine. I didn’t check it myself.'");
-          addClue("Coyle reassured Logan the email was fine without verifying it.");
-        });
-        addOption("Ask about server status", () => {
-          clearOptions();
-          logDialogue("Coyle: 'We saw a spike in traffic right after that file was opened. That’s your breach point, I bet.'");
-          addClue("Coyle noted unusual server traffic post-email click.");
-        });
-      } else {
-        logDialogue("Coyle: 'I hope I didn’t screw this up. Keep digging.'");
-      }
-    }
-
-function toggleCluePopup() {
-  const popup = document.getElementById("clue-popup");
-  const list = document.getElementById("clue-list");
-  if (popup.style.display === "none") {
-    list.innerHTML = "";
-    if (state.clueSheet.length === 0) {
-      const li = document.createElement("li");
-      li.textContent = "No clues yet.";
-      list.appendChild(li);
-    } else {
-      state.clueSheet.forEach((clue, i) => {
-        const li = document.createElement("li");
-        li.textContent = `${i + 1}. ${clue}`;
-        list.appendChild(li);
+    function highlightRoomButton(room) {
+      document.querySelectorAll("button").forEach(btn => {
+        if (btn.textContent.includes(room)) {
+          btn.style.backgroundColor = "#d0eaff";
+        } else if (btn.textContent.includes("Room")) {
+          btn.style.backgroundColor = "";
+        }
       });
     }
-    popup.style.display = "block";
-  } else {
-    popup.style.display = "none";
-  }
-}
-function submitFinalReport() {
-  const suspect = document.getElementById("culprit-select").value;
-  if (!suspect) {
-    logDialogue("Please select a suspect before submitting.");
-    return;
-  }
-  if (suspect === "Logan") {
-    logDialogue("✅ Correct! Logan clicked the phishing email that triggered the ransomware attack. Great job!");
-  } else {
-    logDialogue(`❌ Incorrect. ${suspect} was not responsible for the breach. Review your clues and try again.`);
-  }
-  clearOptions();
-}
 
-let currentRoom = "";
-
-function highlightRoomButton(room) {
-  document.querySelectorAll("button").forEach(btn => {
-    if (btn.textContent.includes(room)) {
-      btn.style.backgroundColor = "#d0eaff";
-    } else if (btn.textContent.includes("Room")) {
-      btn.style.backgroundColor = "";
+    function navigateTo(room) {
+      const bg = document.getElementById("background");
+      const char = document.getElementById("character");
+      clearOptions();
+      currentRoom = room;
+      highlightRoomButton(room);
+      switch (room) {
+        case "Server Room":
+          bg.src = "assets/rooms/server_room.png";
+          char.src = "assets/characters/coyle.png";
+          logDialogue("Agent Coyle stands beside a humming server rack, looking thoughtful.");
+          addOption("Talk to Coyle", talkToCoyle);
+          break;
+        case "Lobby":
+          bg.src = "assets/rooms/lobby.png";
+          char.src = "assets/characters/reyes.png";
+          logDialogue("Agent Reyes leans against the reception desk, watching you approach.");
+          addOption("Talk to Reyes", talkToReyes);
+          break;
+        case "Main Office":
+          bg.src = "assets/rooms/main_office.png";
+          char.src = "assets/characters/logan.png";
+          logDialogue("You see Logan at his desk, visibly nervous.");
+          addOption("Talk to Logan", talkToLogan);
+          break;
+        case "Break Room":
+          bg.src = "assets/rooms/break_room.png";
+          char.src = "";
+          logDialogue("A quiet room. You notice a USB drive on the table.");
+          addOption("Inspect USB drive", inspectUSB);
+          break;
+        case "HR Office":
+          bg.src = "assets/rooms/hr_office.png";
+          char.src = "assets/characters/corey.png";
+          logDialogue("You find Corey examining some personnel files.");
+          addOption("Talk to Corey", talkToCorey);
+          break;
+        case "Crutchfield's Office":
+          bg.src = "assets/rooms/crutchfield_office.png";
+          char.src = "assets/characters/crutchfield.png";
+          logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
+          addOption("Talk to Crutchfield", talkToCrutchfield);
+          break;
+        default:
+          logDialogue("This room doesn't exist yet.");
+          break;
+      }
     }
-  });
-}
 
-function startGame() {
-  navigateTo("Lobby");
-  highlightRoomButton("Lobby");
-}
+    function startGame() {
+      navigateTo("Lobby");
+    }
 
-window.onload = startGame;
+    window.onload = startGame;
 
-</script>
-<div id="clue-popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; border:2px solid #444; padding:20px; max-width:400px; z-index:1000; box-shadow: 0 0 15px rgba(0,0,0,0.3);">
-  <h3>Clue Sheet</h3>
-  <ul id="clue-list"></ul>
-  <button onclick="toggleCluePopup()">Close</button>
-</div>
-
-<!-- Final Report Submission -->
-<div style="margin-top: 20px;">
-  <h2>📝 Final Report</h2>
-  <p>Select the person responsible for the breach:</p>
-  <select id="culprit-select">
-    <option value="">--Choose--</option>
-    <option value="Logan">Logan</option>
-    <option value="Corey">Corey</option>
-    <option value="Crutchfield">Crutchfield</option>
-    <option value="Reyes">Reyes</option>
-    <option value="Coyle">Coyle</option>
-  </select>
-  <button onclick="submitFinalReport()">Submit Report</button>
-</div>
+  </script>
 </body>
 </html>
