@@ -20,7 +20,12 @@
     <button onclick="navigateTo('Server Room')">Server Room</button>
     <button onclick="viewClueSheet()">View Clue Sheet</button>
   </div>
-  <div id="output"></div>
+  <div id="game-area" style="position: relative; width: 960px; height: 540px; border: 1px solid #ccc;">
+  <img id="background" src="" alt="Room Background" style="width: 100%; height: 100%;">
+  <img id="character" src="" alt="Character" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 60%;">
+  <div id="output" style="position: absolute; bottom: 0; background: rgba(255,255,255,0.9); padding: 10px; width: 100%; font-size: 14px;"></div>
+</div>
+
 
   <script>
     const state = {
@@ -126,32 +131,49 @@
       }
     }
 
-    function navigateTo(room) {
-      log(`\n🚪 Entering the ${room}...`);
-      switch (room) {
-        case "Main Office":
-          inspectEmailTerminal();
-          talkToLogan();
-          break;
-        case "Break Room":
-          inspectUSB();
-          break;
-        case "HR Office":
-          talkToCorey();
-          break;
-        case "Crutchfield's Office":
-          talkToCrutchfield();
-          break;
-        case "Lobby":
-          talkToReyes();
-          break;
-        case "Server Room":
-          talkToCoyle();
-          break;
-        default:
-          log("Room not recognized.");
-      }
-    }
+ function navigateTo(room) {
+  log(`\n🚪 Entering the ${room}...`);
+
+  const background = document.getElementById("background");
+  const character = document.getElementById("character");
+
+  switch (room) {
+    case "Main Office":
+      background.src = "main_office.png";
+      character.src = "logan.png";
+      inspectEmailTerminal();
+      talkToLogan();
+      break;
+    case "Break Room":
+      background.src = "break_room.png";
+      character.src = "";
+      inspectUSB();
+      break;
+    case "HR Office":
+      background.src = "hr_office.png";
+      character.src = "corey.png";
+      talkToCorey();
+      break;
+    case "Crutchfield's Office":
+      background.src = "crutchfield_office.png";
+      character.src = "crutchfield.png";
+      talkToCrutchfield();
+      break;
+    case "Lobby":
+      background.src = "lobby.png";
+      character.src = "reyes.png";
+      talkToReyes();
+      break;
+    case "Server Room":
+      background.src = "server_room.png";
+      character.src = "coyle.png";
+      talkToCoyle();
+      break;
+    default:
+      log("Room not recognized.");
+  }
+}
+
   </script>
 </body>
 </html>
