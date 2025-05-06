@@ -137,7 +137,26 @@
       }
     }
 
-    function startGame() {
+    function talkToLogan() {
+  clearOptions();
+  if (!state.talkedToLogan) {
+    logDialogue("Logan: 'Am I in trouble? I thought I followed protocol.'");
+    state.talkedToLogan = true;
+    addOption("Ask about the onboarding email", () => {
+      clearOptions();
+      logDialogue("Logan: 'It looked official... I just clicked the link without thinking. I'm sorry.'");
+      addClue("Logan admits to clicking the phishing email.");
+    });
+    addOption("Ask what happened after he clicked", () => {
+      clearOptions();
+      logDialogue("Logan: 'It froze for a second, then nothing. I didn’t even realize it was a problem until now.'");
+    });
+  } else {
+    logDialogue("Logan: 'I really didn't mean to mess things up.'");
+  }
+}
+
+function startGame() {
       navigateTo("Lobby");
     }
 
