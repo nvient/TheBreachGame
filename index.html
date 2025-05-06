@@ -108,18 +108,18 @@
           addOption("Inspect USB drive", inspectUSB);
           break;
         case "HR Office":
-          
+           bg.src = "hr_office.png";
+          char.src = "corey.png";
+          logDialogue("You find Corey examining some personnel files.");
+          addOption("Talk to Corey", talkToCorey);
+          break;    
         case "Crutchfield's Office":
           bg.src = "crutchfield_office.png";
           char.src = "crutchfield.png";
           logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
           addOption("Talk to Crutchfield", talkToCrutchfield);
           break;
-          bg.src = "hr_office.png";
-          char.src = "corey.png";
-          logDialogue("You find Corey examining some personnel files.");
-          addOption("Talk to Corey", talkToCorey);
-          break;
+         
 
           ");
       }
