@@ -77,11 +77,12 @@
     }
 
     function navigateTo(room) {
-      const bg = document.getElementById("background");
-      const char = document.getElementById("character");
-      clearOptions();
-
-      switch (room) {
+  const bg = document.getElementById("background");
+  const char = document.getElementById("character");
+  clearOptions();
+  currentRoom = room;
+  highlightRoomButton(room);
+  switch (room) {
         case "Server Room":
           bg.src = "server_room.png";
           char.src = "coyle.png";
@@ -107,11 +108,7 @@
           addOption("Inspect USB drive", inspectUSB);
           break;
         case "HR Office":
-          bg.src = "hr_office.png";
-          char.src = "corey.png";
-          logDialogue("You find Corey examining some personnel files.");
-          addOption("Talk to Corey", talkToCorey);
-          break;
+          
         case "Crutchfield's Office":
           bg.src = "crutchfield_office.png";
           char.src = "crutchfield.png";
@@ -124,9 +121,7 @@
           addOption("Talk to Corey", talkToCorey);
           break;
 
-          bg.src = "";
-          char.src = "";
-          logDialogue("Room not implemented yet.");
+          ");
       }
     }
 
