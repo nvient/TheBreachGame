@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>The Breach: The Game</title>
+  <style>
+    body { font-family: sans-serif; background-color: #f9f9f9; padding: 20px; }
+    button { margin: 5px; padding: 10px 20px; font-size: 16px; }
+    #output { white-space: pre-wrap; background: #fff; padding: 20px; border: 1px solid #ccc; height: 300px; overflow-y: scroll; }
+  </style>
+</head>
+<body>
+  <h1>The Breach: The Game</h1>
+  <div>
+    <button onclick="navigateTo('Main Office')">Main Office</button>
+    <button onclick="navigateTo('Break Room')">Break Room</button>
+    <button onclick="navigateTo('HR Office')">HR Office</button>
+    <button onclick="navigateTo('Crutchfield\'s Office')">Crutchfield's Office</button>
+    <button onclick="navigateTo('Lobby')">Lobby</button>
+    <button onclick="navigateTo('Server Room')">Server Room</button>
+    <button onclick="viewClueSheet()">View Clue Sheet</button>
+  </div>
+  <div id="output"></div>
+
+  <script>
+    const state = {
+      clueSheet: [],
+      clueFound: false,
+      talkedToLogan: false,
+      unlockedLoganConfession: false,
+      inspectedUSB: false,
+      talkedToCorey: false,
+      unlockedCoreyOpinion: false,
+      talkedToCrutchfield: false,
+      unlockedCrutchfieldAssessment: false,
+      talkedToReyes: false,
+      unlockedReyesInsight: false,
+      talkedToCoyle: false,
+      unlockedCoyleDetails: false
+    };
+
+    function log(text) {
+      document.getElementById("output").innerText += text + "\n";
+    }
+
+    function addClue(clue) {
+      if (!state.clueSheet.includes(clue)) {
+        state.clueSheet.push(clue);
+        log(`📝 Clue added to sheet: ${clue}`);
+      }
+    }
+
+    function viewClueSheet() {
+      log("\n📋 Clue Sheet:");
+      state.clueSheet.forEach((clue, index) => log(`${index + 1}. ${clue}`));
+      log("------------------\n");
+    }
+
+    function inspectEmailTerminal() {
+      log("You check the email terminal...");
+      log("You see a phishing email sent to Logan: 'Welcome! Please download your onboarding packet.'");
+      state.clueFound = true;
+      addClue("Suspicious onboarding email sent to Logan.");
+    }
+
+    function talkToLogan() {
+      if (!state.talkedToLogan) {
+        log("Logan: 'Am I in trouble? I thought I followed protocol.'");
+        state.talkedToLogan = true;
+      } else if (state.clueFound && !state.unlockedLoganConfession) {
+        log("Logan: 'Okay… I clicked the email. I thought it was real. I'm so sorry.'");
+        state.unlockedLoganConfession = true;
+        addClue("Logan admits to clicking a phishing email.");
+      } else {
+        log("Logan: 'I hope you find something useful.'");
+      }
+    }
+
+    function inspectUSB() {
+      log("You examine the USB drive in the break room. It contains music files and was plugged in after the breach.");
+      state.inspectedUSB = true;
+      addClue("USB drive is a red herring, post-breach use only.");
+    }
+
+    function talkToCorey() {
+      if (!state.talkedToCorey) {
+        log("Corey: 'Watch the quiet ones. Could be nothing—or everything.'");
+        state.talkedToCorey = true;
+      } else if (!state.unlockedCoreyOpinion && state.clueFound) {
+        log("Corey: 'If I had to guess, Logan got fooled. That domain was slick.'");
+        state.unlockedCoreyOpinion = true;
+        addClue("Corey suspects Logan was phished by a fake domain.");
+      }
+    }
+
+    function talkToCrutchfield() {
+      if (!state.talkedToCrutchfield) {
+        log("Crutchfield: 'Investigate. Don't speculate. Let the facts lead.'");
+        state.talkedToCrutchfield = true;
+      } else if (!state.unlockedCrutchfieldAssessment && state.clueFound) {
+        log("Crutchfield: 'We overlooked the domain match in onboarding emails. That's on me.'");
+        state.unlockedCrutchfieldAssessment = true;
+        addClue("Crutchfield admits domain filtering failed during onboarding.");
+      }
+    }
+
+    function talkToReyes() {
+      if (!state.talkedToReyes) {
+        log("Reyes: 'I've flagged phishers before. Someone slipped this time.'");
+        state.talkedToReyes = true;
+      } else if (!state.unlockedReyesInsight && state.clueFound) {
+        log("Reyes: 'New hires are vulnerable. We need better simulations.'");
+        state.unlockedReyesInsight = true;
+        addClue("Reyes suggests Logan lacked proper phishing training.");
+      }
+    }
+
+    function talkToCoyle() {
+      if (!state.talkedToCoyle) {
+        log("Coyle: 'I told Logan it was probably fine. My bad?' 🙈");
+        state.talkedToCoyle = true;
+      } else if (!state.unlockedCoyleDetails && state.clueFound) {
+        log("Coyle: 'Yeah… I skimmed it and said it looked okay. I didn't mean to mislead him.'");
+        state.unlockedCoyleDetails = true;
+        addClue("Coyle unknowingly reassured Logan about a phishing link.");
+      }
+    }
+
+    function navigateTo(room) {
+      log(`\n🚪 Entering the ${room}...`);
+      switch (room) {
+        case "Main Office":
+          inspectEmailTerminal();
+          talkToLogan();
+          break;
+        case "Break Room":
+          inspectUSB();
+          break;
+        case "HR Office":
+          talkToCorey();
+          break;
+        case "Crutchfield's Office":
+          talkToCrutchfield();
+          break;
+        case "Lobby":
+          talkToReyes();
+          break;
+        case "Server Room":
+          talkToCoyle();
+          break;
+        default:
+          log("Room not recognized.");
+      }
+    }
+  </script>
+</body>
+</html>
