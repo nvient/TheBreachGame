@@ -11,7 +11,53 @@
     #character { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 60%; pointer-events: none; }
     #dialogue-box { background: rgba(255,255,255,0.95); padding: 15px; border: 1px solid #ccc; max-width: 960px; min-height: 100px; margin-bottom: 10px; }
     #options-box button { display: block; margin-top: 5px; }
-  </style>
+      #dialogue-box {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px;
+      border: 2px solid #444;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    #options-box button {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      font-size: 15px;
+      width: 100%;
+      max-width: 400px;
+      margin: 10px auto;
+      display: block;
+      cursor: pointer;
+    }
+    #options-box button:hover {
+      background-color: #f0f0f0;
+    }
+
+    #clue-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 2px solid #444;
+      padding: 20px;
+      max-width: 400px;
+      z-index: 1000;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+    #clue-popup ul {
+      padding-left: 20px;
+    }
+    #clue-popup h3 {
+      margin-top: 0;
+    }
+    #clue-popup button {
+      margin-top: 15px;
+    }
 </head>
 <body>
   <h1>The Breach: The Game</h1>
@@ -30,7 +76,13 @@
     <img id="character" src="" alt="Character">
   </div>
 
-  <div id="dialogue-box">Click a room to begin your investigation.</div>
+<div id="clue-popup">
+  <h3>Clue Sheet</h3>
+  <ul id="clue-list"></ul>
+  <button onclick="toggleCluePopup()">Close</button>
+</div>
+
+<div id="dialogue-box">Click a room to begin your investigation.</div>
   <div id="options-box"></div>
 
   <script>
@@ -72,8 +124,27 @@
       }
     }
 
-    function viewClueSheet() {
-      const clues = state.clueSheet.map((c, i) => `${i + 1}. ${c}`).join("\n");
+    function toggleCluePopup() {
+  const popup = document.getElementById("clue-popup");
+  const list = document.getElementById("clue-list");
+  if (popup.style.display === "none" || popup.style.display === "") {
+    list.innerHTML = "";
+    if (state.clueSheet.length === 0) {
+      const li = document.createElement("li");
+      li.textContent = "No clues yet.";
+      list.appendChild(li);
+    } else {
+      state.clueSheet.forEach((clue, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${i + 1}. ${clue}`;
+        list.appendChild(li);
+      });
+    }
+    popup.style.display = "block";
+  } else {
+    popup.style.display = "none";
+  }
+}. ${c}`).join("\n");
       logDialogue("📋 Clue Sheet:\n" + (clues || "No clues yet."));
       clearOptions();
     }
