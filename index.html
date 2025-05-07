@@ -208,13 +208,59 @@ function talkToCorey() {
     }
 
     function talkToReyes() {
-      clearOptions(); const d=state.reyesDialogues;
-      if (!d.behavior) { logDialogue("Reyes: 'I’ve seen patterns in every breach.'"); addOption('Ask about pattern', ()=>{ clearOptions(); logDialogue("Reyes: 'It always starts with a click.'"); addClue("Phishing starts with a click."); d.behavior=true; talkToReyes(); }); }
-      if (!d.training) { addOption('Ask about training', ()=>{ clearOptions(); logDialogue("Reyes: 'We need live simulations.'"); d.training=true; talkToReyes(); }); }
-      if (!d.agents) { addOption('Ask about Coyle', ()=>{ clearOptions(); logDialogue("Reyes: 'He moves fast, sometimes too fast.'"); addClue("Coyle moves too fast, warns of rushed decisions."); d.agents=true; talkToReyes(); }); }
-      if (!d.watch) { addOption("Ask why she's watchful", ()=>{ clearOptions(); logDialogue("Reyes: 'New hires are my concern.'"); d.watch=true; talkToReyes(); }); }
-      if (!d.vishing) { addOption('Ask about vishing calls', ()=>{ clearOptions(); logDialogue("Reyes: 'I did get a vishing call, but that was at 9:45 AM, after the breach.'"); addClue("Reyes received a vishing call at 9:45 AM, which occurred after the breach."); d.vishing=true; talkToReyes(); }); }
-      if (d.behavior&&d.training&&d.agents&&d.watch&&d.vishing) { logDialogue("Reyes: 'Nothing else here.'"); addOption('Talk again', talkToReyes); }
+      clearOptions(); const d = state.reyesDialogues;
+      // Intro line only once
+      if (!d.intro) {
+        logDialogue("Reyes: 'I’ve seen patterns in every breach.'");
+        d.intro = true;
+      }
+      if (!d.behavior) {
+        addOption('Ask about pattern', () => {
+          clearOptions();
+          logDialogue("Reyes: 'It always starts with a click.'");
+          addClue("Phishing starts with a click.");
+          d.behavior = true;
+          talkToReyes();
+        });
+      }
+      if (!d.training) {
+        addOption('Ask about training', () => {
+          clearOptions();
+          logDialogue("Reyes: 'We need live simulations.'");
+          d.training = true;
+          talkToReyes();
+        });
+      }
+      if (!d.agents) {
+        addOption('Ask about Coyle', () => {
+          clearOptions();
+          logDialogue("Reyes: 'He moves fast, sometimes too fast.'");
+          addClue("Coyle moves too fast, warns of rushed decisions.");
+          d.agents = true;
+          talkToReyes();
+        });
+      }
+      if (!d.watch) {
+        addOption("Ask why she's watchful", () => {
+          clearOptions();
+          logDialogue("Reyes: 'New hires are my concern.'");
+          d.watch = true;
+          talkToReyes();
+        });
+      }
+      if (!d.vishing) {
+        addOption('Ask about vishing calls', () => {
+          clearOptions();
+          logDialogue("Reyes: 'I did get a vishing call, but that was at 9:45 AM, after the breach.'");
+          addClue("Reyes received a vishing call at 9:45 AM, which occurred after the breach.");
+          d.vishing = true;
+          talkToReyes();
+        });
+      }
+      if (d.behavior && d.training && d.agents && d.watch && d.vishing) {
+        logDialogue("Reyes: 'Nothing else here.'");
+        addOption('Talk again', talkToReyes);
+      }
     }
 
     function talkToCrutchfield() {
