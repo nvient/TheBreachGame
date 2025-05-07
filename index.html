@@ -98,13 +98,24 @@
         case 'Break Room':
           bg.src='assets/rooms/break_room.png'; char.src='';
           logDialogue("A quiet room. You notice a USB drive on the table.");
-          addOption('View USB Drive', ()=>{ addClue("Secret Drive labeled for Agent Coyle"); logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle'."); addOption('Ask why it’s here', ()=>{ clearOptions(); logDialogue("You recall Coyle mentioning secure backups here last week."); addClue("Coyle uses secure backup in break room."); talkToCoyle(); }); });
+          addOption('View USB Drive', ()=>{
+            clearOptions();
+            addClue("Secret Drive labeled for Agent Coyle");
+            logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle'.");
+            addOption('Ask why it’s here', ()=>{
+              clearOptions();
+              logDialogue("You recall Coyle mentioning secure backups here last week.");
+              addClue("Coyle uses secure backup in break room.");
+              // No character here, remain in Break Room
+              addOption('View USB Drive Again', () => navigateTo('Break Room'));
+            });
+          });
           break;
         case 'HR Office':
           bg.src='assets/rooms/hr_office.png'; char.src='assets/characters/corey.png';
           logDialogue("You find Corey examining some personnel files. A file cabinet stands nearby.");
           addOption('Talk to Corey', talkToCorey);
-          addOption('Open File Cabinet', ()=>{ addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake."); addClue("HR File: Reyes has completed all training modules. Corey's security training is overdue by 2 weeks."); logDialogue("Inside the cabinet, you also see an anonymous note: 'Check the dark web logs.'"); addOption('Inspect the note', ()=>{ clearOptions(); logDialogue("The handwriting matches an internal memo style, but unsigned."); addClue("Found unsigned internal memo suggesting to check dark web."); talkToReyes(); }); });
+          addOption('Open File Cabinet', ()=>{ addClue("HR File: Logan's record shows his new hire packet was never sent."); addClue("HR File: Reyes has completed all training modules. Corey's security training is overdue by 2 weeks."); logDialogue("Inside the cabinet, you also see an anonymous note: 'Check the dark web logs.'"); addOption('Inspect the note', ()=>{ clearOptions(); logDialogue("The handwriting matches an internal memo style, but unsigned."); addClue("Found unsigned internal memo suggesting to check dark web."); talkToReyes(); }); });
           break;
         case 'Server Room':
           bg.src='assets/rooms/server_room.png'; char.src='assets/characters/coyle.png';
