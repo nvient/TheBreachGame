@@ -94,7 +94,7 @@
           bg.src='assets/rooms/server_room.png'; char.src='assets/characters/coyle.png';
           logDialogue("Agent Coyle stands beside a humming server rack. A terminal glows in the corner.");
           addOption('Talk to Coyle', talkToCoyle);
-          addOption('Access Dark Web Terminal', ()=>{ addClue('Dark Web Terminal: Multiple employees have credentials in past breaches. Reyes and Coyle's passwords were found hashed. Logan is not listed.'); logDialogue('Terminal shows hashed creds for Coyle and Reyes; Logan not found.'); });
+          addOption('Access Dark Web Terminal', ()=>{ addClue("Dark Web Terminal: Multiple employees have credentials in past breaches. Reyes and Coyle's passwords were found hashed. Logan is not listed."); logDialogue('Terminal shows hashed creds for Coyle and Reyes; Logan not found.'); });
           break;
         case 'Crutchfield\'s Office':
           bg.src='assets/rooms/crutchfield_office.png'; char.src='assets/characters/crutchfield.png';
