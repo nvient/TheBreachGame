@@ -152,6 +152,17 @@
       }
       // switch rooms (only HR Office shown here)
       switch (room) {
+        case 'Lobby':
+          document.getElementById('background').src = 'assets/rooms/lobby.png';
+          document.getElementById('character').src = 'assets/characters/reyes.png';
+          logDialogue("Reyes: 'There's been a security incident and we need your help. Navigate to the different rooms and talk with our agents — they may have clues about what happened. You have 30 minutes to solve this case! Good luck!'
+");
+          addOption('Start Investigation', () => {
+            clearOptions();
+            logDialogue("Reyes: 'Remember, check every room and gather as many clues as you can.'");
+            addOption('Talk to Reyes', talkToReyes);
+          });
+          break;
         case 'HR Office':
           document.getElementById('background').src = 'assets/rooms/hr_office.png';
           document.getElementById('character').src = 'assets/characters/corey.png';
