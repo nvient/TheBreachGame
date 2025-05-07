@@ -189,13 +189,7 @@
         addOption('Talk again', talkToLogan);
       }
     }
-      else if (!d.aftermath) { addOption('Ask what happened after', ()=>{ clearOptions(); logDialogue("Logan: 'It froze then... nothing, until now.'"); addOption('Ask if files changed', ()=>{ clearOptions(); logDialogue("Logan: 'My documents folder was renamed to LOCKED.'"); addClue("Ransomware renamed user folders."); talkToLogan(); }); d.aftermath=true; }); }
-      else if (!d.feelings) { addOption('Ask who he suspects', ()=>{ clearOptions(); logDialogue("Logan: 'Agent Reyes has been too curious about my files.'"); addClue("Logan suspects Reyes due to her scrutiny."); d.feelings=true; talkToLogan(); }); }
-      else if (!d.backgroundCheck) { addOption('Ask about prior training', ()=>{ clearOptions(); logDialogue("Logan: 'It was basic, no spear-phishing.'"); d.backgroundCheck=true; talkToLogan(); }); }
-      else { logDialogue("Logan: 'I just hope this doesn’t ruin everything.'"); addOption('Talk again', talkToLogan); }
-    }
-
-    function talkToCorey() {
+function talkToCorey() {
       clearOptions(); const d=state.coreyDialogues;
       if (!d.behavior) { logDialogue("Corey: 'First breach rodeo, am I right?'"); addOption('Ask about suspicious behavior', ()=>{ clearOptions(); logDialogue("Corey: 'Logan showed me an email that seemed off...'"); addClue("Corey warned Logan not to open the suspicious email."); d.behavior=true; talkToCorey(); }); }
       if (!d.pastIncidents) { addOption('Ask about past incidents', ()=>{ clearOptions(); logDialogue("Corey: 'We had a similar spoof last quarter.'"); addOption('Ask outcome', ()=>{ clearOptions(); logDialogue("Corey: 'It was caught by Reyes before damage.'"); addClue("Past spoof caught by Reyes."); talkToCorey(); }); d.pastIncidents=true; }); }
