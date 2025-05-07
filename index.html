@@ -139,7 +139,7 @@
       if (!d.behavior) { logDialogue("Reyes: 'I’ve seen patterns in every breach.'\n"); addOption('Ask about pattern', ()=>{ clearOptions(); logDialogue("Reyes: 'It always starts with a click.'"); addClue("Phishing starts with a click."); }); d.behavior=true; }
       if (!d.training) { addOption('Ask about training', ()=>{ clearOptions(); logDialogue("Reyes: 'We need live simulations.'"); d.training=true; }); }
       if (!d.agents) { addOption('Ask about Coyle', ()=>{ clearOptions(); logDialogue("Reyes: 'He moves fast, sometimes too fast.'"); addClue("Coyle moves too fast, warns of rushed decisions."); }); d.agents=true; }
-      if (!d.watch) { addOption('Ask why she's watchful', ()=>{ clearOptions(); logDialogue("Reyes: 'New hires are my concern.'"); d.watch=true; }); }
+      if (!d.watch) { addOption("Ask why she's watchful", () => { clearOptions(); logDialogue("Reyes: 'New hires are my concern.'"); d.watch=true; }); }
       if (d.behavior&&d.training&&d.agents&&d.watch) { logDialogue("Reyes: 'Nothing else here.'"); addOption('Talk again', talkToReyes); }
     }
 
