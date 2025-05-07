@@ -70,7 +70,15 @@
     function startTimer() { updateTimer(); timerInterval = setInterval(updateTimer,1000); }
     function logDialogue(text) { if (!roomDialogues[currentRoom]) roomDialogues[currentRoom] = text; else roomDialogues[currentRoom] += "\n"+text; document.getElementById('dialogue-box').innerText = roomDialogues[currentRoom]; }
     function clearOptions() { document.getElementById('options-box').innerHTML = ''; }
-    function addOption(label, cb) { const btn=document.createElement('button'); btn.textContent=label; btn.onclick=cb; document.getElementById('options-box').appendChild(btn); }
+    function addOption(label, cb) {
+      const btn = document.createElement('button');
+      btn.textContent = label;
+      btn.onclick = function() {
+        logDialogue("You: " + label);
+        cb();
+      };
+      document.getElementById('options-box').appendChild(btn);
+    }
     function addClue(clue) { if (!state.clueSheet.includes(clue)) { state.clueSheet.push(clue); const li=document.createElement('li'); li.textContent=`${state.clueSheet.length}. ${clue}`; document.getElementById('clue-list').appendChild(li);} }
     function highlightRoomButton(room) { document.querySelectorAll('.controls button').forEach(b=>b.style.backgroundColor=b.textContent===room?'#d0eaff':''); }
 
@@ -135,8 +143,52 @@
     }
 
     function talkToLogan() {
-      clearOptions(); const d=state.loganDialogues;
-      if (!d.onboarding) { logDialogue("Logan: 'Man, what a crazy first day!'"); addOption('Ask about onboarding email', ()=>{ clearOptions(); logDialogue("Logan: 'I logged on at 9:00am, opened the New Hire Packet from HR then my computer started acting up.'"); addClue("Logan admits to clicking the phishing email."); d.onboarding=true; talkToLogan(); }); }
+      clearOptions();
+      const d = state.loganDialogues;
+      if (!d.intro) {
+        logDialogue("Logan: 'What can I do for you?'");
+        d.intro = true;
+      }
+      if (!d.role) {
+        addOption('Ask about his role here', () => {
+          clearOptions();
+          logDialogue("Logan: 'I'm the new agent in training, here to learn from the team.'");
+          d.role = true;
+          talkToLogan();
+        });
+      }
+      if (!d.computerIssue) {
+        addOption('Ask about the computer glitch', () => {
+          clearOptions();
+          logDialogue("Logan: 'It froze after I opened what I thought was my New Hire packet.'");
+          d.computerIssue = true;
+          talkToLogan();
+        });
+      }
+      // Gated onboarding question appears only after HR file clue
+      if (state.clueSheet.includes("HR File: Logan's record shows his new hire packet was never sent.") && !d.onboarding) {
+        addOption('Ask about onboarding email', () => {
+          clearOptions();
+          logDialogue("Logan: 'I clicked that packet email without realizing it was fake. I’m so sorry.'");
+          addClue("Logan admits to clicking the phishing email disguised as a new hire packet.");
+          d.onboarding = true;
+          talkToLogan();
+        });
+      }
+      if (d.onboarding && !d.aftermath) {
+        addOption('Ask what happened after', () => {
+          clearOptions();
+          logDialogue("Logan: 'My files locked up and I saw ransom notes everywhere.'");
+          addClue("Ransomware locked user files and displayed ransom notes.");
+          d.aftermath = true;
+          talkToLogan();
+        });
+      }
+      if (d.intro && d.role && d.computerIssue && d.onboarding && d.aftermath) {
+        logDialogue("Logan: 'That’s all I can provide right now.'");
+        addOption('Talk again', talkToLogan);
+      }
+    }
       else if (!d.aftermath) { addOption('Ask what happened after', ()=>{ clearOptions(); logDialogue("Logan: 'It froze then... nothing, until now.'"); addOption('Ask if files changed', ()=>{ clearOptions(); logDialogue("Logan: 'My documents folder was renamed to LOCKED.'"); addClue("Ransomware renamed user folders."); talkToLogan(); }); d.aftermath=true; }); }
       else if (!d.feelings) { addOption('Ask who he suspects', ()=>{ clearOptions(); logDialogue("Logan: 'Agent Reyes has been too curious about my files.'"); addClue("Logan suspects Reyes due to her scrutiny."); d.feelings=true; talkToLogan(); }); }
       else if (!d.backgroundCheck) { addOption('Ask about prior training', ()=>{ clearOptions(); logDialogue("Logan: 'It was basic, no spear-phishing.'"); d.backgroundCheck=true; talkToLogan(); }); }
@@ -167,7 +219,8 @@
       if (!d.training) { addOption('Ask about training', ()=>{ clearOptions(); logDialogue("Reyes: 'We need live simulations.'"); d.training=true; talkToReyes(); }); }
       if (!d.agents) { addOption('Ask about Coyle', ()=>{ clearOptions(); logDialogue("Reyes: 'He moves fast, sometimes too fast.'"); addClue("Coyle moves too fast, warns of rushed decisions."); d.agents=true; talkToReyes(); }); }
       if (!d.watch) { addOption("Ask why she's watchful", ()=>{ clearOptions(); logDialogue("Reyes: 'New hires are my concern.'"); d.watch=true; talkToReyes(); }); }
-      if (d.behavior&&d.training&&d.agents&&d.watch) { logDialogue("Reyes: 'Nothing else here.'"); addOption('Talk again', talkToReyes); }
+      if (!d.vishing) { addOption('Ask about vishing calls', ()=>{ clearOptions(); logDialogue("Reyes: 'I did get a vishing call, but that was at 9:45 AM, after the breach.'"); addClue("Reyes received a vishing call at 9:45 AM, which occurred after the breach."); d.vishing=true; talkToReyes(); }); }
+      if (d.behavior&&d.training&&d.agents&&d.watch&&d.vishing) { logDialogue("Reyes: 'Nothing else here.'"); addOption('Talk again', talkToReyes); }
     }
 
     function talkToCrutchfield() {
