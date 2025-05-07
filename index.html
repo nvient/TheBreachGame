@@ -82,24 +82,25 @@
         case 'Break Room':
           bg.src='assets/rooms/break_room.png'; char.src='';
           logDialogue("A quiet room. You notice a USB drive on the table.");
-          addOption('View USB Drive', ()=>{ addClue("Secret Drive labeled for Agent Coyle"); logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle'."); });
+          addOption('View USB Drive', ()=>{ addClue("Secret Drive labeled for Agent Coyle"); logDialogue("You inspect the USB. It's labeled 'Secret Drive for Agent Coyle'."); addOption('Ask why it’s here', ()=>{ clearOptions(); logDialogue("You recall Coyle mentioning secure backups here last week."); }); });
           break;
         case 'HR Office':
           bg.src='assets/rooms/hr_office.png'; char.src='assets/characters/corey.png';
           logDialogue("You find Corey examining some personnel files. A file cabinet stands nearby.");
           addOption('Talk to Corey', talkToCorey);
-          addOption('Open File Cabinet', ()=>{ addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake."); addClue("HR File: Reyes has completed all training modules. Corey's security training is overdue by 2 weeks."); logDialogue("You find a folder marked 'Logan – Pending' with a note 'Wait for IT verification'."); });
+          addOption('Open File Cabinet', ()=>{ addClue("HR File: Logan's record shows his new hire packet was never sent. The phishing email he opened was fake."); addClue("HR File: Reyes has completed all training modules. Corey's security training is overdue by 2 weeks."); logDialogue("Inside the cabinet, you also see an anonymous note: 'Check the dark web logs.'</"); addOption('Inspect the note', ()=>{ clearOptions(); logDialogue("The handwriting matches an internal memo style, but unsigned."); addClue("Found unsigned internal memo suggesting to check dark web."); }); });
           break;
         case 'Server Room':
           bg.src='assets/rooms/server_room.png'; char.src='assets/characters/coyle.png';
           logDialogue("Agent Coyle stands beside a humming server rack. A terminal glows in the corner.");
           addOption('Talk to Coyle', talkToCoyle);
-          addOption('Access Dark Web Terminal', ()=>{ addClue("Dark Web Terminal: Multiple employees have credentials in past breaches. Reyes and Coyle's passwords were found hashed. Logan is not listed."); logDialogue('Terminal shows hashed creds for Coyle and Reyes; Logan not found.'); });
+          addOption('Access Dark Web Terminal', ()=>{ addClue("Dark Web Terminal: Multiple employees have credentials in past breaches. Reyes and Coyle's passwords were found hashed. Logan is not listed."); logDialogue("The terminal reveals a password dump from last month. Corey appears in a hacker forum too."); addOption('Ask why Corey appears', ()=>{ clearOptions(); logDialogue("You recall Corey mentioning black hat days—maybe he forgot to scrub logs."); addClue("Corey’s past hacking might be visible on dark web."); }); });
           break;
         case 'Crutchfield\'s Office':
           bg.src='assets/rooms/crutchfield_office.png'; char.src='assets/characters/crutchfield.png';
           logDialogue("Deputy Director Crutchfield stands at her desk, reviewing a report.");
           addOption('Talk to Crutchfield', talkToCrutchfield);
+          addOption('Review her notes', ()=>{ addClue("Crutchfield’s notes mention unusual VPN activity last week."); logDialogue("Her notepad references an odd VPN login from an unrecognized IP."); });
           break;
         default:
           logDialogue("This room doesn't exist yet.");
@@ -108,44 +109,47 @@
 
     function talkToLogan() {
       clearOptions(); const d=state.loganDialogues;
-      if (!d.onboarding) { logDialogue("Logan: 'Am I in trouble? I thought I followed protocol.'"); addOption('Ask about onboarding email', ()=>{ logDialogue("Logan: 'It looked official... I clicked a fake packet.'"); addClue("Logan admits to clicking the phishing email."); d.onboarding=true; }); }
-      else if (!d.aftermath) { addOption('Ask what happened after', ()=>{ clearOptions(); logDialogue("Logan: 'It froze then... nothing, until now.'"); d.aftermath=true; }); }
-      else if (!d.feelings) { addOption('Ask how he feels', ()=>{ clearOptions(); logDialogue("Logan: 'I feel awful...'"); d.feelings=true; }); }
+      if (!d.onboarding) { logDialogue("Logan: 'Man, what a crazy first day!'\n"); addOption('Ask about onboarding email', ()=>{ clearOptions(); logDialogue("Logan: 'I logged on at 9:00am, opened the New Hire Packet from HR then my computer started acting up.'"); addClue("Logan admits to clicking the phishing email."); d.onboarding=true; addOption('Ask about link domain', ()=>{ clearOptions(); logDialogue("Logan: 'I didn’t notice it was .ru instead of .com.'"); addClue("Link domain was .ru not .com."); }); }); }
+      else if (!d.aftermath) { addOption('Ask what happened after', ()=>{ clearOptions(); logDialogue("Logan: 'It froze then... nothing, until now.'"); addOption('Ask if files changed', ()=>{ clearOptions(); logDialogue("Logan: 'My documents folder was renamed to LOCKED.'"); addClue("Ransomware renamed user folders."); }); d.aftermath=true; }); }
+      else if (!d.feelings) { addOption('Ask who he suspects', ()=>{ clearOptions(); logDialogue("Logan: 'Agent Reyes has been too curious about my files.'"); addClue("Logan suspects Reyes due to her scrutiny."); d.feelings=true; }); }
       else if (!d.backgroundCheck) { addOption('Ask about prior training', ()=>{ clearOptions(); logDialogue("Logan: 'It was basic, no spear-phishing.'"); d.backgroundCheck=true; }); }
       else { logDialogue("Logan: 'I just hope this doesn’t ruin everything.'"); addOption('Talk again', talkToLogan); }
     }
 
     function talkToCorey() {
       clearOptions(); const d=state.coreyDialogues;
-      if (!d.behavior) { logDialogue("Corey: 'First breach rodeo...'"); addOption('Ask about suspicious behavior', ()=>{ clearOptions(); logDialogue("Corey: 'Logan showed me an email...'"); addClue("Corey warned Logan not to open the suspicious email."); d.behavior=true; addOption('Ask why not reported', ()=>{ clearOptions(); logDialogue("Corey: 'I figured he’d be fine.'"); }); }); }
-      if (!d.pastIncidents) { addOption('Ask about past incidents', ()=>{ clearOptions(); logDialogue("Corey: 'HR had spoofed packets before.'"); d.pastIncidents=true; addOption('Ask who handled them', ()=>{ clearOptions(); logDialogue("Corey: 'Reyes and I, but she was out.'"); }); }); }
-      if (!d.phishingTips) { addOption('Ask phishing tips', ()=>{ clearOptions(); logDialogue("Corey: 'Check URLs...' "); d.phishingTips=true; addOption('Ask what makes them suspicious', ()=>{ clearOptions(); logDialogue("Corey: 'Typos, weird domains.'"); }); }); }
-      if (!d.clickedBefore) { addOption('Ask if he slipped', ()=>{ clearOptions(); logDialogue("Corey: 'Not since black hat days.'"); d.clickedBefore=true; addOption('Press him', ()=>{ clearOptions(); logDialogue("Corey: 'Relax, I’m good.'"); }); }); }
-      if (d.behavior&&d.pastIncidents&&d.phishingTips&&d.clickedBefore) { logDialogue("Corey: 'That’s all I’ve got.'"); addOption('Talk again', talkToCorey); }
+      if (!d.behavior) { logDialogue("Corey: 'First breach rodeo, am I right?'\n"); addOption('Ask about suspicious behavior', ()=>{ clearOptions(); logDialogue("Corey: 'Logan showed me an email that seemed off...'"); addClue("Corey warned Logan not to open the suspicious email."); addOption('Ask what was off', ()=>{ clearOptions(); logDialogue("Corey: 'The sender address used underscores and numbers.'"); addClue("Phishing address used underscores and numbers."); }); d.behavior=true; }); }
+      if (!d.pastIncidents) { addOption('Ask about past incidents', ()=>{ clearOptions(); logDialogue("Corey: 'We had a similar spoof last quarter.'"); addOption('Ask outcome', ()=>{ clearOptions(); logDialogue("Corey: 'It was caught by Reyes before damage.'"); addClue("Past spoof caught by Reyes."); }); d.pastIncidents=true; }); }
+      if (!d.phishingTips) { addOption('Ask phishing tips', ()=>{ clearOptions(); logDialogue("Corey: 'Always follow the SLAM method. Look at the Sender, Links, Attachments, and Message details.'"); d.phishingTips=true; }); }
+      if (!d.clickedBefore) { addOption('Ask past slips', ()=>{ clearOptions(); logDialogue("Corey: 'I once clicked a test link in training and felt foolish.'"); }); d.clickedBefore=true; }
+      if (d.behavior&&d.pastIncidents&&d.phishingTips) { logDialogue("Corey: 'That’s all I’ve got for now.'"); addOption('Talk again', talkToCorey); }
     }
 
     function talkToCoyle() {
       clearOptions(); const d=state.coyleDialogues;
-      if (!d.logs) { logDialogue("Coyle: 'Server load spiked...'"); addOption('Ask about server logs', ()=>{ clearOptions(); logDialogue("Coyle: 'Ransomware started at 9:03.'"); addClue("Coyle's logs confirm the attack began shortly after email."); d.logs=true; addOption('Ask about login attempts', ()=>{ clearOptions(); logDialogue("Coyle: 'One from Romania, blocked.'"); d.logins=true; addOption('Ask why not flagged', ()=>{ clearOptions(); logDialogue("Coyle: 'Filters caught it.'"); }); }); }); }
-      if (!d.message) { addOption('Ask about Logan message', ()=>{ clearOptions(); logDialogue("Coyle: 'He asked if file was safe...'"); addClue("Coyle okayed the suspicious email."); d.message=true; addOption('Ask why no double-check', ()=>{ clearOptions(); logDialogue("Coyle: 'Patch rollout priority.'"); }); }); }
-      if (!d.filters) { addOption('Ask prevention', ()=>{ clearOptions(); logDialogue("Coyle: 'Filters miss spear-phish.'"); d.filters=true; addOption('Ask about filter config', ()=>{ clearOptions(); logDialogue("Coyle: 'Configured but not perfect.'"); }); }); }
-      if (d.logs&&d.message&&d.filters) { logDialogue("Coyle: 'I missed something.'"); addOption('Talk again', talkToCoyle); }
+      if (!d.logs) { logDialogue("Coyle: 'Server load spiked like a heart monitor.'\n"); addOption('Ask when it spiked', ()=>{ clearOptions(); logDialogue("Coyle: 'Exactly 9:05 AM.'"); addClue("Attack initiated at 9:05 AM."); }); d.logs=true; }
+      if (!d.message) { addOption("Ask about Logan's message", ()=>{ clearOptions(); logDialogue("Coyle: 'He asked if a file was safe; I said yes.'"); addClue("Coyle okayed the suspicious email."); d.message=true; addOption('Ask if he regrets it', ()=>{ clearOptions(); logDialogue("Coyle: 'Big time.'"); }); }); }
+      if (!d.filters) { addOption('Ask about filters', ()=>{ clearOptions(); logDialogue("Coyle: 'Our filters miss spear-phish by design.'"); d.filters=true; }); }
+      if (!d.logins) { addOption('Ask about login attempts', ()=>{ clearOptions(); logDialogue("Coyle: 'Found failed admin login at 9:02.'"); addClue("Failed admin login attempt at 9:02 AM."); d.logins=true; }); }
+      if (d.logs&&d.message&&d.filters&&d.logins) { logDialogue("Coyle: 'That’s my piece.'"); addOption('Talk again', talkToCoyle); }
     }
 
     function talkToReyes() {
       clearOptions(); const d=state.reyesDialogues;
-      if (!d.behavior) { logDialogue("Reyes: 'I’ve worked cases like this.'"); addOption('Ask about previous cases', ()=>{ clearOptions(); logDialogue("Reyes: 'CFO duped by fake invoice.'"); addClue("Past phishing invoice scam."); d.behavior=true; }); }
-      if (!d.training) { addOption('Ask about training gaps', ()=>{ clearOptions(); logDialogue("Reyes: 'Need refresher courses.'"); d.training=true; }); }
-      if (!d.agents) { addOption('Ask about other agents', ()=>{ clearOptions(); logDialogue("Reyes: 'Coyle hasty at times.'"); d.agents=true; }); }
-      if (d.behavior&&d.training&&d.agents) { logDialogue("Reyes: 'Keep digging.'"); addOption('Talk again', talkToReyes); }
+      if (!d.behavior) { logDialogue("Reyes: 'I’ve seen patterns in every breach.'\n"); addOption('Ask about pattern', ()=>{ clearOptions(); logDialogue("Reyes: 'It always starts with a click.'"); addClue("Phishing starts with a click."); }); d.behavior=true; }
+      if (!d.training) { addOption('Ask about training', ()=>{ clearOptions(); logDialogue("Reyes: 'We need live simulations.'"); d.training=true; }); }
+      if (!d.agents) { addOption('Ask about Coyle', ()=>{ clearOptions(); logDialogue("Reyes: 'He moves fast, sometimes too fast.'"); addClue("Coyle moves too fast, warns of rushed decisions."); }); d.agents=true; }
+      if (!d.watch) { addOption('Ask why she's watchful', ()=>{ clearOptions(); logDialogue("Reyes: 'New hires are my concern.'"); d.watch=true; }); }
+      if (d.behavior&&d.training&&d.agents&&d.watch) { logDialogue("Reyes: 'Nothing else here.'"); addOption('Talk again', talkToReyes); }
     }
 
     function talkToCrutchfield() {
       clearOptions(); const d=state.crutchfieldDialogues;
-      if (!d.onboarding) { logDialogue("Crutchfield: 'Lapse costly.'"); addOption('Ask onboarding quiz', ()=>{ clearOptions(); logDialogue("Crutchfield: 'He scored 92%.'"); addClue("Logan passed onboarding quiz but fell for phishing."); d.onboarding=true; }); }
-      if (!d.response) { addOption('Ask response time', ()=>{ clearOptions(); logDialogue("Crutchfield: 'We responded fast.'"); d.response=true; }); }
-      if (!d.suspicion) { addOption('Ask about Corey', ()=>{ clearOptions(); logDialogue("Crutchfield: 'He’s secretive.'"); d.suspicion=true; }); }
-      if (d.onboarding&&d.response&&d.suspicion) { logDialogue("Crutchfield: 'Get results soon.'"); addOption('Talk again', talkToCrutchfield); }
+      if (!d.onboarding) { logDialogue("Crutchfield: 'Onboarding is critical.'\n"); addOption('Ask quiz result', ()=>{ clearOptions(); logDialogue("Crutchfield: 'He aced it, shockingly.'"); addClue("Logan passed the quiz but still failed."); }); d.onboarding=true; }
+      if (!d.response) { addOption('Ask about isolation', ()=>{ clearOptions(); logDialogue("Crutchfield: 'We cut him off immediately.'"); addClue("Systems isolated after breach."); }); d.response=true; }
+      if (!d.suspicion) { addOption('Ask if she mistrusts anyone', ()=>{ clearOptions(); logDialogue("Crutchfield: 'Corey’s secrecy worries me.'"); addClue("Crutchfield suspicious of Corey."); }); d.suspicion=true; }
+      if (!d.external) { addOption('Ask about external threat', ()=>{ clearOptions(); logDialogue("Crutchfield: 'We’ve seen coordinated bot attacks.'"); d.external=true; }); }
+      if (d.onboarding&&d.response&&d.suspicion&&d.external) { logDialogue("Crutchfield: 'That concludes my notes.'"); addOption('Talk again', talkToCrutchfield); }
     }
 
     function openFinalReport() {
@@ -157,7 +161,7 @@
     }
 
     function submitAccusation(n, r) {
-      clearOptions(); if(n==='Logan'&&r==='Clicked a phishing email disguised as a new hire packet') logDialogue('✅ Correct!'); else logDialogue(`❌ Not quite. ${n} & that method incorrect.`);
+      clearOptions(); if(n==='Logan'&&r==='Clicked a phishing email disguised as a new hire packet') logDialogue('✅ Correct! Logan was the culprit.'); else logDialogue(`❌ Not quite. ${n} & that method incorrect.`);
     }
 
     function startGame(){navigateTo('Lobby');}
